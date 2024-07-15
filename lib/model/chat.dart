@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class ChatRoom {
   String chatRoomId;
   ChatMember writer;
@@ -29,6 +31,19 @@ class ChatRoom {
       'messages': messages.map((message) => message.toJson()).toList(),
     };
   }
+
+  factory ChatRoom.fromDocumentSnapshot(DocumentSnapshot snapshot) {
+    final List<Message> message = [];
+    final messageSnapshot = List<Map>.from(snapshot['messages'] as List);
+    for (var e in messageSnapshot) {
+      message.add(Message.fromJson(e as Map<String, dynamic>));
+    }
+    return ChatRoom(
+        chatRoomId: snapshot['chatRoomId'],
+        writer: ChatMember.fromJson(snapshot['writer'] as Map<String, dynamic>),
+        contact: ChatMember.fromJson(snapshot['contact'] as Map<String, dynamic>),
+        messages: message);
+  }
 }
 
 class ChatMember {
@@ -50,7 +65,7 @@ class ChatMember {
     );
   }
 
-   toJson() {
+  toJson() {
     return {
       'name': name,
       'id': id,
@@ -78,7 +93,7 @@ class Message {
     );
   }
 
-   toJson() {
+  toJson() {
     return {
       'content': content,
       'sender': sender,
