@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class ChatRoom {
   String chatRoomId;
   ChatMember writer;
@@ -21,6 +23,20 @@ class ChatRoom {
             .toList());
   }
 
+  factory ChatRoom.fromDocumentSnapshot(DocumentSnapshot snapshot) {
+    final List<Message> messages = [];
+    final messageSnapshot = List<Map>.from(snapshot['messages'] as List);
+    for (var e in messageSnapshot) {
+      messages.add(Message.fromJson(e as Map<String, dynamic>));
+    }
+    return ChatRoom(
+      chatRoomId: snapshot['chatRoomId'],
+      writer: ChatMember.fromJson(snapshot['writer'] as Map<String, dynamic>),
+      contact: ChatMember.fromJson(snapshot['contact'] as Map<String, dynamic>),
+      messages: messages,
+    );
+  }
+
   Map<String, dynamic> toJson() {
     return {
       'chatRoomId': chatRoomId,
@@ -34,27 +50,27 @@ class ChatRoom {
 class ChatMember {
   String name;
   String id;
-  String role;
+  String? photoUrl;
 
   ChatMember({
     required this.name,
     required this.id,
-    required this.role,
+    this.photoUrl,
   });
 
   factory ChatMember.fromJson(Map<String, dynamic> json) {
     return ChatMember(
       name: json['name'],
       id: json['id'],
-      role: json['role'],
+      photoUrl: json['photoUrl'],
     );
   }
 
-   toJson() {
+  toJson() {
     return {
       'name': name,
       'id': id,
-      'role': role,
+      'photoUrl': photoUrl,
     };
   }
 }
@@ -78,7 +94,7 @@ class Message {
     );
   }
 
-   toJson() {
+  toJson() {
     return {
       'content': content,
       'sender': sender,
