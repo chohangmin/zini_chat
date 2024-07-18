@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:zini_chat/screen/main_screen.dart';
 import 'package:zini_chat/screen/sign_in_up_screen.dart';
 import 'package:zini_chat/screen/splash_screen.dart';
 
@@ -18,7 +19,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const SignInUpScreen(),
+      home: const MainScreen(),
     );
   }
 }

@@ -10,7 +10,7 @@ class SpeechBubble extends StatelessWidget {
     return ClipPath(
       clipper: BubbleClipper(),
       child: Container(
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.all(35),
         color: Colors.blue[100],
         child: Center(
           child: Text(
@@ -31,23 +31,23 @@ class BubbleClipper extends CustomClipper<Path> {
   @override
   Path getClip(Size size) {
     var path = Path()
-      ..moveTo(0, 20)
-      ..lineTo(0, size.height - 20)
-      ..quadraticBezierTo(0, size.height, 20, size.height)
-      ..lineTo(size.width - 20, size.height)
-      ..quadraticBezierTo(size.width, size.height, size.width, size.height - 20)
-      ..lineTo(size.width, 20)
-      ..quadraticBezierTo(size.width, 0, size.width - 20, 0)
-      ..lineTo(30, 0)
-      ..quadraticBezierTo(10, 0, 0, 20)
-      ..close()
-      ..moveTo(20, size.height - 20)
-      ..lineTo(10, size.height)
-      ..lineTo(30, size.height - 20)
-      ..close();
+      ..addRRect(RRect.fromLTRBR(
+        0,
+        20,
+        size.width,
+        size.height - 20,
+        const Radius.circular(20),
+      ));
+
+    path.moveTo(size.width / 2 - 15, size.height - 20);
+    path.lineTo(size.width / 2, size.height);
+    path.lineTo(size.width / 2, size.height - 20);
+
+    path.close();
+
     return path;
   }
 
   @override
-  bool shouldReclip(CustomClipper<Path> oldClipper) => false;
+  bool shouldReclip(CustomClipper<Path> oldClipper) => true;
 }
