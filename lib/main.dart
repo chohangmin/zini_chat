@@ -2,8 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:zini_chat/screen/main_screen.dart';
 import 'package:zini_chat/screen/sign_in_up_screen.dart';
 import 'package:zini_chat/screen/splash_screen.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
-void main() {
+late final FirebaseAuth auth;
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+  auth = FirebaseAuth.instance;
   runApp(const MyApp());
 }
 
@@ -19,7 +30,15 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const MainScreen(),
+      home: StreamBuilder<User?>(
+        stream: auth.authStateChanges(),
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            return const MainScreen();
+          }
+          return const SignInUpScreen();
+        },
+      ),
     );
   }
 }

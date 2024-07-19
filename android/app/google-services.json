@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "401583163296",
-    "project_id": "zini-chat",
-    "storage_bucket": "zini-chat.appspot.com"
+    "project_number": "1037830621063",
+    "project_id": "zini-chat-new-new",
+    "storage_bucket": "zini-chat-new-new.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:401583163296:android:fa36c501e47d77c459c6c5",
+        "mobilesdk_app_id": "1:1037830621063:android:cde014c9d6769d4040b522",
         "android_client_info": {
           "package_name": "com.example.zini_chat"
         }
@@ -15,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyApDOYyVslJzcHcDqmJH3k4-lQFwus9lHE"
+          "current_key": "AIzaSyCJ1CkY6Rj0mXywMA4gl-Oazt1AEFDXz5s"
         }
       ],
       "services": {
