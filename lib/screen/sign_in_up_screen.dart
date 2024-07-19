@@ -13,6 +13,9 @@ class SignInUpScreen extends StatefulWidget {
 
 class _SignInUpScreenState extends State<SignInUpScreen> {
   bool isSignIn = true;
+  TextEditingController emailController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -90,6 +93,7 @@ class _SignInUpScreenState extends State<SignInUpScreen> {
                           children: [
                             TextFormField(
                               key: const ValueKey(1),
+                              controller: emailController,
                               decoration: const InputDecoration(
                                 prefixIcon: Icon(Icons.email),
                                 enabledBorder: OutlineInputBorder(
@@ -109,6 +113,7 @@ class _SignInUpScreenState extends State<SignInUpScreen> {
                             ),
                             TextFormField(
                               key: const ValueKey(2),
+                              controller: passwordController,
                               decoration: const InputDecoration(
                                 prefixIcon: Icon(Icons.lock),
                                 enabledBorder: OutlineInputBorder(
@@ -132,6 +137,7 @@ class _SignInUpScreenState extends State<SignInUpScreen> {
                           children: [
                             TextFormField(
                               key: const ValueKey(3),
+                              controller: emailController,
                               decoration: const InputDecoration(
                                 prefixIcon: Icon(Icons.email),
                                 enabledBorder: OutlineInputBorder(
@@ -151,6 +157,7 @@ class _SignInUpScreenState extends State<SignInUpScreen> {
                             ),
                             TextFormField(
                               key: const ValueKey(4),
+                              controller: passwordController,
                               decoration: const InputDecoration(
                                 prefixIcon: Icon(Icons.lock),
                                 enabledBorder: OutlineInputBorder(
