@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:zini_chat/widget/custom_text_field_form.dart';
 import 'package:zini_chat/widget/speech_bubble.dart';
 
 class SignInUpScreen extends StatefulWidget {
@@ -95,21 +96,12 @@ class _SignInUpScreenState extends State<SignInUpScreen> {
                         key: formKey,
                         child: Column(
                           children: [
-                            TextFormField(
-                              key: const ValueKey(1),
-                              decoration: const InputDecoration(
-                                prefixIcon: Icon(Icons.email),
-                                enabledBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.all(
-                                    Radius.circular(20),
-                                  ),
-                                ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.all(
-                                    Radius.circular(20),
-                                  ),
-                                ),
-                              ),
+                            CustomTextFieldForm(
+                              formKey: 1,
+                              icon: const Icon(Icons.email),
+                              onSaved: (value) {
+                                _userEmail = value!;
+                              },
                               validator: (value) {
                                 if (value!.isEmpty) {
                                   return 'Please enter email address.';
@@ -120,38 +112,23 @@ class _SignInUpScreenState extends State<SignInUpScreen> {
 
                                 return null;
                               },
-                              onSaved: (value) {
-                                _userEmail = value!;
-                              },
                             ),
                             const SizedBox(
                               height: 10,
                             ),
-                            TextFormField(
-                              key: const ValueKey(2),
-                              decoration: const InputDecoration(
-                                prefixIcon: Icon(Icons.lock),
-                                enabledBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.all(
-                                    Radius.circular(20),
-                                  ),
-                                ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.all(
-                                    Radius.circular(20),
-                                  ),
-                                ),
-                              ),
+                            CustomTextFieldForm(
+                              formKey: 2,
+                              icon: const Icon(Icons.lock),
+                              obscureText: true,
+                              onSaved: (value) {
+                                _userPassword = value!;
+                              },
                               validator: (value) {
                                 if (value!.length < 7) {
                                   return 'Please enter more than 6 characters';
                                 }
                                 return null;
                               },
-                              onSaved: (value) {
-                                _userPassword = value!;
-                              },
-                              obscureText: true,
                             ),
                           ],
                         ),
@@ -161,21 +138,12 @@ class _SignInUpScreenState extends State<SignInUpScreen> {
                         key: formKey,
                         child: Column(
                           children: [
-                            TextFormField(
-                              key: const ValueKey(3),
-                              decoration: const InputDecoration(
-                                prefixIcon: Icon(Icons.email),
-                                enabledBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.all(
-                                    Radius.circular(20),
-                                  ),
-                                ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.all(
-                                    Radius.circular(20),
-                                  ),
-                                ),
-                              ),
+                            CustomTextFieldForm(
+                              formKey: 3,
+                              icon: const Icon(Icons.email),
+                              onSaved: (value) {
+                                _userEmail = value!;
+                              },
                               validator: (value) {
                                 if (value!.isEmpty) {
                                   return 'Please enter email address.';
@@ -186,38 +154,23 @@ class _SignInUpScreenState extends State<SignInUpScreen> {
 
                                 return null;
                               },
-                              onSaved: (value) {
-                                _userEmail = value!;
-                              },
                             ),
                             const SizedBox(
                               height: 10,
                             ),
-                            TextFormField(
-                              key: const ValueKey(4),
-                              decoration: const InputDecoration(
-                                prefixIcon: Icon(Icons.lock),
-                                enabledBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.all(
-                                    Radius.circular(20),
-                                  ),
-                                ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.all(
-                                    Radius.circular(20),
-                                  ),
-                                ),
-                              ),
+                            CustomTextFieldForm(
+                              formKey: 4,
+                              icon: const Icon(Icons.lock),
+                              obscureText: true,
+                              onSaved: (value) {
+                                _userPassword = value!;
+                              },
                               validator: (value) {
                                 if (value!.length < 7) {
                                   return 'Please enter more than 6 characters';
                                 }
                                 return null;
                               },
-                              onSaved: (value) {
-                                _userPassword = value!;
-                              },
-                              obscureText: true,
                             ),
                           ],
                         ),
