@@ -1,4 +1,5 @@
 import 'package:extended_image/extended_image.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -12,9 +13,11 @@ class SignInUpScreen extends StatefulWidget {
 }
 
 class _SignInUpScreenState extends State<SignInUpScreen> {
+  final formKey = GlobalKey<FormState>();
+  final _authentication = FirebaseAuth.instance;
   bool isSignIn = true;
-  TextEditingController emailController = TextEditingController();
-  TextEditingController passwordController = TextEditingController();
+  String _userEmail = '';
+  String _userPassword = '';
 
   @override
   Widget build(BuildContext context) {
@@ -88,12 +91,12 @@ class _SignInUpScreenState extends State<SignInUpScreen> {
                       ],
                     ),
                     if (isSignIn)
-                      Container(
+                      Form(
+                        key: formKey,
                         child: Column(
                           children: [
                             TextFormField(
                               key: const ValueKey(1),
-                              controller: emailController,
                               decoration: const InputDecoration(
                                 prefixIcon: Icon(Icons.email),
                                 enabledBorder: OutlineInputBorder(
@@ -107,13 +110,25 @@ class _SignInUpScreenState extends State<SignInUpScreen> {
                                   ),
                                 ),
                               ),
+                              validator: (value) {
+                                if (value!.isEmpty) {
+                                  return 'Please enter email address.';
+                                }
+                                if (!value.contains('@')) {
+                                  return 'Email address must include @';
+                                }
+
+                                return null;
+                              },
+                              onSaved: (value) {
+                                _userEmail = value!;
+                              },
                             ),
                             const SizedBox(
                               height: 10,
                             ),
                             TextFormField(
                               key: const ValueKey(2),
-                              controller: passwordController,
                               decoration: const InputDecoration(
                                 prefixIcon: Icon(Icons.lock),
                                 enabledBorder: OutlineInputBorder(
@@ -127,17 +142,27 @@ class _SignInUpScreenState extends State<SignInUpScreen> {
                                   ),
                                 ),
                               ),
+                              validator: (value) {
+                                if (value!.length < 7) {
+                                  return 'Please enter more than 6 characters';
+                                }
+                                return null;
+                              },
+                              onSaved: (value) {
+                                _userPassword = value!;
+                              },
+                              obscureText: true,
                             ),
                           ],
                         ),
                       ),
                     if (!isSignIn)
-                      Container(
+                      Form(
+                        key: formKey,
                         child: Column(
                           children: [
                             TextFormField(
                               key: const ValueKey(3),
-                              controller: emailController,
                               decoration: const InputDecoration(
                                 prefixIcon: Icon(Icons.email),
                                 enabledBorder: OutlineInputBorder(
@@ -151,13 +176,25 @@ class _SignInUpScreenState extends State<SignInUpScreen> {
                                   ),
                                 ),
                               ),
+                              validator: (value) {
+                                if (value!.isEmpty) {
+                                  return 'Please enter email address.';
+                                }
+                                if (!value.contains('@')) {
+                                  return 'Email address must include @';
+                                }
+
+                                return null;
+                              },
+                              onSaved: (value) {
+                                _userEmail = value!;
+                              },
                             ),
                             const SizedBox(
                               height: 10,
                             ),
                             TextFormField(
                               key: const ValueKey(4),
-                              controller: passwordController,
                               decoration: const InputDecoration(
                                 prefixIcon: Icon(Icons.lock),
                                 enabledBorder: OutlineInputBorder(
@@ -171,10 +208,66 @@ class _SignInUpScreenState extends State<SignInUpScreen> {
                                   ),
                                 ),
                               ),
+                              validator: (value) {
+                                if (value!.length < 7) {
+                                  return 'Please enter more than 6 characters';
+                                }
+                                return null;
+                              },
+                              onSaved: (value) {
+                                _userPassword = value!;
+                              },
+                              obscureText: true,
                             ),
                           ],
                         ),
-                      )
+                      ),
+                    ElevatedButton.icon(
+                      onPressed: () async {
+                        if (isSignIn) {
+                          if (formKey.currentState!.validate()) {
+                            formKey.currentState!.save();
+
+                            await _authentication.signInWithEmailAndPassword(
+                              email: _userEmail,
+                              password: _userPassword,
+                            );
+
+                            setState(() {});
+
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Sign In Success!!'),
+                              ),
+                            );
+                          }
+                        } else {
+                          if (formKey.currentState!.validate()) {
+                            formKey.currentState!.save();
+                            setState(() {});
+
+                            await _authentication
+                                .createUserWithEmailAndPassword(
+                              email: _userEmail,
+                              password: _userPassword,
+                            );
+
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Sign Up Success!!'),
+                              ),
+                            );
+                          }
+                        }
+                      },
+                      label: const Text('Submit'),
+                    ),
+                    Column(
+                      children: [
+                        Text('email : $_userEmail'),
+                        Text('password : $_userPassword'),
+                      ],
+                    )
                   ],
                 ),
               ),

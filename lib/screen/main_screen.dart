@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:zini_chat/screen/chat_list_screen.dart';
 import 'package:zini_chat/screen/friend_list_screen.dart';
@@ -11,6 +12,7 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
+  final _authentication = FirebaseAuth.instance;
   int _selectedIndex = 0;
 
   static const List<Widget> _widgetOptions = [
@@ -28,6 +30,16 @@ class _MainScreenState extends State<MainScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: const Text('Main Screen'),
+        actions: [
+          IconButton(
+              onPressed: () {
+                _authentication.signOut();
+              },
+              icon: const Icon(Icons.exit_to_app))
+        ],
+      ),
       body: IndexedStack(
         index: _selectedIndex,
         children: _widgetOptions,
