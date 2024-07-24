@@ -2,23 +2,22 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ChatRoom {
   String chatRoomId;
-  ChatMember writer;
-  ChatMember contact;
+  List<ChatMember> participants;
   List<Message> messages;
 
   ChatRoom({
     required this.chatRoomId,
-    required this.writer,
-    required this.contact,
+    required this.participants,
     required this.messages,
   });
 
   factory ChatRoom.fromJson(Map<String, dynamic> json) {
     return ChatRoom(
         chatRoomId: json['chatRoomId'],
-        writer: json['writer'].map((writer) => ChatMember.fromJson(writer)),
-        contact: json['contact'].map((contact) => ChatMember.fromJson(contact)),
-        messages: json['messages']
+        participants: (json['participants'] as List)
+            .map((writer) => ChatMember.fromJson(writer))
+            .toList(),
+        messages: (json['messages'] as List)
             .map((message) => Message.fromJson(message))
             .toList());
   }
@@ -31,8 +30,9 @@ class ChatRoom {
     }
     return ChatRoom(
       chatRoomId: snapshot['chatRoomId'],
-      writer: ChatMember.fromJson(snapshot['writer'] as Map<String, dynamic>),
-      contact: ChatMember.fromJson(snapshot['contact'] as Map<String, dynamic>),
+      participants: (snapshot['participants'] as List)
+          .map((participant) => ChatMember.fromJson(participant))
+          .toList(),
       messages: messages,
     );
   }
@@ -40,12 +40,11 @@ class ChatRoom {
   Map<String, dynamic> toJson() {
     return {
       'chatRoomId': chatRoomId,
-      'writer': writer.toJson(),
-      'contact': contact.toJson(),
+      'participants':
+          participants.map((participant) => participant.toJson()).toList(),
       'messages': messages.map((message) => message.toJson()).toList(),
     };
   }
-
 }
 
 class ChatMember {
