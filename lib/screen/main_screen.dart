@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:zini_chat/screen/chat_list_screen.dart';
@@ -34,7 +35,10 @@ class _MainScreenState extends State<MainScreen> {
         title: const Text('Main Screen'),
         actions: [
           IconButton(
-              onPressed: () {
+              onPressed: () async {
+                await FirebaseFirestore.instance
+                    .doc('users')
+                    .update({'isConnecting': 0});
                 _authentication.signOut();
               },
               icon: const Icon(Icons.exit_to_app))

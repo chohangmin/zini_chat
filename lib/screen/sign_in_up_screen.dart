@@ -1,10 +1,11 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:zini_chat/widget/custom_text_field_form.dart';
 import 'package:zini_chat/widget/speech_bubble.dart';
+import 'package:english_words/english_words.dart';
 
 class SignInUpScreen extends StatefulWidget {
   const SignInUpScreen({super.key});
@@ -199,11 +200,25 @@ class _SignInUpScreenState extends State<SignInUpScreen> {
                             formKey.currentState!.save();
                             setState(() {});
 
-                            await _authentication
+                            final newUser = await _authentication
                                 .createUserWithEmailAndPassword(
                               email: _userEmail,
                               password: _userPassword,
                             );
+
+                            WordPair randomName = WordPair.random();
+
+                            await FirebaseFirestore.instance
+                                .collection('users')
+                                .doc(newUser.user!.uid)
+                                .set({
+                              'userId': newUser.user!.uid,
+                              'userName': randomName.asPascalCase,
+                              'userImage': null,
+                              'isConnecting': 1,
+                            });
+
+                            // if (newUser != null) {}
 
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
