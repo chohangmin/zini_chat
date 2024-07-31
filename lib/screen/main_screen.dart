@@ -37,8 +37,9 @@ class _MainScreenState extends State<MainScreen> {
           IconButton(
               onPressed: () async {
                 await FirebaseFirestore.instance
-                    .doc('users')
-                    .update({'isConnecting': 0});
+                    .collection('users')
+                    .doc(_authentication.currentUser!.uid)
+                    .update({'isConnecting': false});
                 _authentication.signOut();
               },
               icon: const Icon(Icons.exit_to_app))

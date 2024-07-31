@@ -182,23 +182,26 @@ class _SignInUpScreenState extends State<SignInUpScreen> {
                           if (formKey.currentState!.validate()) {
                             formKey.currentState!.save();
 
-                            await _authentication.signInWithEmailAndPassword(
+                            final user = await _authentication
+                                .signInWithEmailAndPassword(
                               email: _userEmail,
                               password: _userPassword,
                             );
 
-                            setState(() {});
+                            await FirebaseFirestore.instance
+                                .collection('users')
+                                .doc(user.user!.uid)
+                                .update({'isConnecting': true});
 
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('Sign In Success!!'),
-                              ),
-                            );
+                            // ScaffoldMessenger.of(context).showSnackBar(
+                            //   const SnackBar(
+                            //     content: Text('Sign In Success!!'),
+                            //   ),
+                            // );
                           }
                         } else {
                           if (formKey.currentState!.validate()) {
                             formKey.currentState!.save();
-                            setState(() {});
 
                             final newUser = await _authentication
                                 .createUserWithEmailAndPassword(
@@ -215,16 +218,16 @@ class _SignInUpScreenState extends State<SignInUpScreen> {
                               'userId': newUser.user!.uid,
                               'userName': randomName.asPascalCase,
                               'userImage': null,
-                              'isConnecting': 1,
+                              'isConnecting': true,
                             });
 
                             // if (newUser != null) {}
 
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('Sign Up Success!!'),
-                              ),
-                            );
+                            // ScaffoldMessenger.of(context).showSnackBar(
+                            //   const SnackBar(
+                            //     content: Text('Sign Up Success!!'),
+                            //   ),
+                            // );
                           }
                         }
                       },
