@@ -4,13 +4,9 @@ import 'package:flutter/material.dart';
 class FriendListScreen extends StatelessWidget {
   const FriendListScreen({super.key});
 
-  
-
   Future<void> _fetchUserName() async {
     final QuerySnapshot snapshot =
         await FirebaseFirestore.instance.collection('users').get();
-
-    
   }
 
   @override
@@ -37,7 +33,11 @@ class FriendListScreen extends StatelessWidget {
                   opacity: userDocs[index]['isConnecting'] ? 1 : 0.7,
                   child: Card(
                     child: ListTile(
-                      leading: const CircleAvatar(),
+                      leading: userDocs[index]['userImage'] == null
+                          ? const CircleAvatar(
+                              child: Icon(Icons.person),
+                            )
+                          : const CircleAvatar(),
                       title: Text(userDocs[index]['userName']),
                       trailing: Container(
                         width: 5,

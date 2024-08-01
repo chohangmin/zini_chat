@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class SettingScreen extends StatefulWidget {
@@ -10,6 +11,10 @@ class SettingScreen extends StatefulWidget {
 
 class _SettingScreenState extends State<SettingScreen> {
   final _formKey = GlobalKey<FormState>();
+  final _authentication = FirebaseAuth.instance;
+
+  String userName = '';
+  final TextEditingController _userNameController = TextEditingController();
 
   List<String> _userNames = [];
 
@@ -32,60 +37,75 @@ class _SettingScreenState extends State<SettingScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Row(
+    return Scaffold(
+      body: GestureDetector(
+        onTap: () {
+          Focus.of(context).unfocus();
+        },
+        child: Column(
           children: [
-            Expanded(
-              child: Form(
-                key: _formKey,
-                child: TextFormField(
-                  key: const ValueKey(1),
-                  decoration: const InputDecoration(
-                    prefixIcon: Icon(Icons.person),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(20),
+            Row(
+              children: [
+                Expanded(
+                  child: Form(
+                    key: _formKey,
+                    child: TextFormField(
+                      key: const ValueKey(1),
+                      controller: _userNameController,
+                      decoration: const InputDecoration(
+                        prefixIcon: Icon(Icons.person),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(20),
+                          ),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(20),
+                          ),
+                        ),
                       ),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(20),
-                      ),
+                      validator: (value) {
+                        if (value!.isEmpty) {
+                          return 'Please enter user name';
+                        }
+                        if (_userNames.contains(value)) {
+                          return 'Entered user name is existing... Change user name';
+                        }
+
+                        return null;
+                      },
                     ),
                   ),
-                  validator: (value) {
-                    if (value!.isEmpty) {
-                      return 'Please enter user name';
-                    }
-                    if (_userNames.contains(value)) {
-                      return 'Entered user name is existing... Change user name';
-                    }
-
-                    return null;
-                  },
                 ),
-              ),
+                const SizedBox(
+                  width: 10,
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    if (_formKey.currentState!.validate()) {
+                      final userName = _userNameController.text;
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Change user name successful!'),
+                        ),
+                      );
+                      FirebaseFirestore.instance
+                          .collection('users')
+                          .doc(_authentication.currentUser!.uid)
+                          .update({'userName': userName});
+                      _fetchUserNames();
+                      _userNameController.clear();
+                    }
+                  },
+                  child: const Text('Submit'),
+                ),
+              ],
             ),
-            const SizedBox(
-              width: 10,
-            ),
-            ElevatedButton(
-              onPressed: () {
-                if (_formKey.currentState!.validate()) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Change user name successful!'),
-                    ),
-                  );
-                  _fetchUserNames();
-                }
-              },
-              child: const Text('Submit'),
-            ),
+            Row()
           ],
-        )
-      ],
+        ),
+      ),
     );
   }
 }
