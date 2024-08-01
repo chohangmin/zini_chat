@@ -22,6 +22,17 @@ class _SignInUpScreenState extends State<SignInUpScreen> {
   String _userPassword = '';
 
   @override
+  void dispose() {
+  
+    super.dispose();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: GestureDetector(
