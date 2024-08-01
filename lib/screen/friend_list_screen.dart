@@ -29,6 +29,7 @@ class FriendListScreen extends StatelessWidget {
           return ListView.builder(
               itemCount: userDocs.length,
               itemBuilder: (context, index) {
+                print('User Image URL: ${userDocs[index]['userImage']}');
                 return Opacity(
                   opacity: userDocs[index]['isConnecting'] ? 1 : 0.7,
                   child: Card(
@@ -37,7 +38,11 @@ class FriendListScreen extends StatelessWidget {
                           ? const CircleAvatar(
                               child: Icon(Icons.person),
                             )
-                          : const CircleAvatar(),
+                          : CircleAvatar(
+                              backgroundImage: NetworkImage(
+                                userDocs[index]['userImage'],
+                              ),
+                            ),
                       title: Text(userDocs[index]['userName']),
                       trailing: Container(
                         width: 5,
