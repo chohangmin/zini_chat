@@ -14,24 +14,38 @@ class _SettingScreenState extends State<SettingScreen> {
   final _authentication = FirebaseAuth.instance;
 
   String userName = '';
+  String? userUid;
+  String? userImage;
+
   final TextEditingController _userNameController = TextEditingController();
 
   List<String> _userNames = [];
 
   Future<void> _fetchUserNames() async {
-    final QuerySnapshot snapshot =
+    final QuerySnapshot userNamesSnapshot =
         await FirebaseFirestore.instance.collection('users').get();
     final List<String> userNames =
-        snapshot.docs.map((doc) => doc['userName'] as String).toList();
+        userNamesSnapshot.docs.map((doc) => doc['userName'] as String).toList();
 
     setState(() {
       _userNames = userNames;
     });
   }
 
+  Future<void> _fetchUserImage() async {
+    final DocumentSnapshot userImageSnapshot =
+        await FirebaseFirestore.instance.collection('users').doc(userUid).get();
+    final String? image = userImageSnapshot['userImage'] as String?;
+
+    setState(() {
+      userImage = image;
+    });
+  }
+
   @override
   void initState() {
     super.initState();
+    userUid = _authentication.currentUser!.uid;
     _fetchUserNames();
   }
 
@@ -92,7 +106,7 @@ class _SettingScreenState extends State<SettingScreen> {
                       );
                       FirebaseFirestore.instance
                           .collection('users')
-                          .doc(_authentication.currentUser!.uid)
+                          .doc(userUid)
                           .update({'userName': userName});
                       _fetchUserNames();
                       _userNameController.clear();
@@ -102,7 +116,17 @@ class _SettingScreenState extends State<SettingScreen> {
                 ),
               ],
             ),
-            Row()
+            Row(
+              children: [
+                CircleAvatar(
+                  backgroundColor:
+                      userImage == null ? Colors.pink : Colors.black,
+                  child: userImage == null
+                      ? const Icon(Icons.person)
+                      : const Icon(Icons.person_2_outlined),
+                )
+              ],
+            ),
           ],
         ),
       ),
