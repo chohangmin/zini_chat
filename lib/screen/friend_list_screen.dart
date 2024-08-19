@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:zini_chat/widget/search_chat_room.dart';
 
 class FriendListScreen extends StatelessWidget {
   const FriendListScreen({super.key});
@@ -32,26 +34,54 @@ class FriendListScreen extends StatelessWidget {
                 print('User Image URL: ${userDocs[index]['userImage']}');
                 return Opacity(
                   opacity: userDocs[index]['isConnecting'] ? 1 : 0.7,
-                  child: Card(
-                    child: ListTile(
-                      leading: userDocs[index]['userImage'] == null
-                          ? const CircleAvatar(
-                              child: Icon(Icons.person),
-                            )
-                          : CircleAvatar(
-                              backgroundImage: NetworkImage(
-                                userDocs[index]['userImage'],
-                              ),
+                  child: GestureDetector(
+                    onTap: () {
+                      showDialog(
+                        context: context,
+                        builder: (context) => Dialog(
+                          child: Container(
+                            padding: const EdgeInsets.all(20),
+                            width: 150,
+                            height: 300,
+                            child: Column(
+                              children: [
+                                ListTile(
+                                  leading: const Icon(Icons.chat_bubble),
+                                  title: const Text('1 : 1 chat'),
+                                  onTap: () {
+                                    SearchChatRoom(
+                                        user1: FirebaseAuth
+                                            .instance.currentUser!.uid,
+                                        user2: userDocs[index]['userId']);
+                                  },
+                                )
+                              ],
                             ),
-                      title: Text(userDocs[index]['userName']),
-                      trailing: Container(
-                        width: 5,
-                        height: 5,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: userDocs[index]['isConnecting']
-                              ? Colors.green
-                              : Colors.red,
+                          ),
+                        ),
+                      );
+                    },
+                    child: Card(
+                      child: ListTile(
+                        leading: userDocs[index]['userImage'] == null
+                            ? const CircleAvatar(
+                                child: Icon(Icons.person),
+                              )
+                            : CircleAvatar(
+                                backgroundImage: NetworkImage(
+                                  userDocs[index]['userImage'],
+                                ),
+                              ),
+                        title: Text(userDocs[index]['userName']),
+                        trailing: Container(
+                          width: 5,
+                          height: 5,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: userDocs[index]['isConnecting']
+                                ? Colors.green
+                                : Colors.red,
+                          ),
                         ),
                       ),
                     ),
