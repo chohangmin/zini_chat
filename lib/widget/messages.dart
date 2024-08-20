@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:zini_chat/widget/chat_bubble.dart';
 
 class Messages extends StatelessWidget {
   const Messages(this.chatRoomId, {super.key});
@@ -30,13 +32,16 @@ class Messages extends StatelessWidget {
         }
 
         final chatDocs = snapshot.data!.docs;
+        final currentUser = FirebaseAuth.instance.currentUser;
 
         return ListView.builder(
             itemCount: chatDocs.length,
             itemBuilder: (context, index) {
-              return Container(
-                child: Text('${chatDocs[index]['text']}'),
-              );
+              return ChatBubble(
+                  text: chatDocs[index]['text'],
+                  userImage: chatDocs[index]['userImage'],
+                  userName: chatDocs[index]['userName'],
+                  isMe: chatDocs[index]['userId'] == currentUser!.uid);
             });
       },
     );

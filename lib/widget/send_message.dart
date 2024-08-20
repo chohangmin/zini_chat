@@ -42,11 +42,37 @@ class _SendMessageState extends State<SendMessage> {
 
   void _sendMessage() async {
     print('test 1');
-    final userData = await FirebaseFirestore.instance
+    final userData1 = await FirebaseFirestore.instance
         .collection('users')
-        .doc(currentUser)
+        .doc(widget.user1)
+        .get();
+    final userData2 = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(widget.user1)
         .get();
     print('test 2');
+
+    final chatDocRef = await FirebaseFirestore.instance
+        .collection('chatRoom')
+        .doc(widget.chatRoomId)
+        .get();
+
+    if (!chatDocRef.exists) {
+      FirebaseFirestore.instance
+          .collection('chatRoom')
+          .doc(widget.chatRoomId)
+          .set({});
+
+      FirebaseFirestore.instance
+          .collection('chatRoom')
+          .doc(widget.chatRoomId)
+          .collection('partnerInfo')
+          .add({
+        'userId': userData2.data()!['userId'],
+        'userName': userData2.data()!['userName'],
+        'userImage': userData2.data()!['userImage'],
+      });
+    }
 
     FirebaseFirestore.instance
         .collection('chatRoom')
@@ -56,11 +82,12 @@ class _SendMessageState extends State<SendMessage> {
       {
         'text': text,
         'time': Timestamp.now(),
-        'userID': currentUser,
-        'userName': userData.data()!['userName'],
-        'userImage': userData.data()!['userImage'],
+        'userId': currentUser,
+        'userName': userData1.data()!['userName'],
+        'userImage': userData1.data()!['userImage'],
       },
     );
+
     print('test 3');
 
     myController.clear();
