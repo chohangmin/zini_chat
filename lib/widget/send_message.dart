@@ -3,17 +3,23 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class SendMessage extends StatefulWidget {
-  const SendMessage(this.chatRoomId, {super.key});
+  const SendMessage(
+      {super.key,
+      required this.chatRoomId,
+      required this.user1,
+      required this.user2});
 
   final String chatRoomId;
+  final String user1;
+  final String user2;
 
   @override
   State<SendMessage> createState() => _SendMessageState();
 }
 
 class _SendMessageState extends State<SendMessage> {
-  final user1 = FirebaseAuth.instance.currentUser;
-  String user2 = 'AAAAAA';
+  final currentUser = FirebaseAuth.instance.currentUser!.uid;
+
   final myController = TextEditingController();
   String text = '';
 
@@ -35,28 +41,27 @@ class _SendMessageState extends State<SendMessage> {
   }
 
   void _sendMessage() async {
+    print('test 1');
     final userData = await FirebaseFirestore.instance
         .collection('users')
-        .doc(user1!.uid)
+        .doc(currentUser)
         .get();
+    print('test 2');
 
-    List<String> userIds = [user1!.uid, user2];
-    userIds.sort();
-    String chatRoomId = userIds[0] + userIds[1];
-
-    await FirebaseFirestore.instance
+    FirebaseFirestore.instance
         .collection('chatRoom')
-        .doc(chatRoomId)
+        .doc(widget.chatRoomId)
         .collection('messages')
         .add(
       {
         'text': text,
         'time': Timestamp.now(),
-        'userID': user1!.uid,
+        'userID': currentUser,
         'userName': userData.data()!['userName'],
         'userImage': userData.data()!['userImage'],
       },
     );
+    print('test 3');
 
     myController.clear();
   }
@@ -72,7 +77,14 @@ class _SendMessageState extends State<SendMessage> {
           ),
         ),
         IconButton(
-          onPressed: text.trim().isEmpty ? null : _sendMessage,
+          onPressed: () {
+            if (text.trim().isEmpty) {
+              print("Button is disabled, text is empty");
+            } else {
+              print("Button is enabled, sending message");
+              _sendMessage();
+            }
+          },
           icon: const Icon(
             Icons.send,
             color: Colors.blue,

@@ -48,11 +48,20 @@ class FriendListScreen extends StatelessWidget {
                                 ListTile(
                                   leading: const Icon(Icons.chat_bubble),
                                   title: const Text('1 : 1 chat'),
-                                  onTap: () {
-                                    SearchChatRoom(
+                                  onTap: () async {
+                                    print('click');
+                                    Navigator.push(context,
+                                        MaterialPageRoute(builder: (context) {
+                                      return SearchChatRoom(
                                         user1: FirebaseAuth
                                             .instance.currentUser!.uid,
-                                        user2: userDocs[index]['userId']);
+                                        user2: userDocs[index]['userId'],
+                                      );
+                                    }));
+                                    print(
+                                        "test user 1 ${FirebaseAuth.instance.currentUser!.uid}");
+                                    print("test user 2 ${userDocs[index]['userId']}");
+                                    print('CLICK');
                                   },
                                 )
                               ],

@@ -14,11 +14,15 @@ class SearchChatRoom extends StatelessWidget {
     userIds.sort();
     String chatRoomId = userIds[0] + userIds[1];
 
+    print(user1);
+    print(user2);
+    print("test chatRoom ID $chatRoomId");
+
     return Scaffold(
       body: Column(
         children: [
           Expanded(child: Messages(chatRoomId)),
-          SendMessage(chatRoomId),
+          SendMessage(chatRoomId: chatRoomId, user1: user1, user2: user2),
         ],
       ),
     );
