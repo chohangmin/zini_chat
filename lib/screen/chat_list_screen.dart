@@ -123,33 +123,23 @@ class ChatListScreen extends StatelessWidget {
                             ));
                       },
                       child: Card(
-                        child: Container(
-                          padding: const EdgeInsets.all(5),
-                          child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    CircleAvatar(
-                                      backgroundImage: NetworkImage(
-                                          partnerInfo['userImage']),
-                                    ),
-                                    Text(partnerInfo['userName']),
-                                  ],
-                                ),
-                                Column(
-                                  children: [
-                                    Text(
-                                      latestMessage['text'],
-                                      style: const TextStyle(fontSize: 20),
-                                    ),
-                                    Text(latestMessage['time']
-                                        .toDate()
-                                        .toString()),
-                                  ],
-                                )
-                              ]),
+                        child: ListTile(
+                          leading: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              CircleAvatar(
+                                backgroundImage:
+                                    NetworkImage(partnerInfo['userImage']),
+                              ),
+                              Text(partnerInfo['userName']),
+                            ],
+                          ),
+                          title: Text(
+                            latestMessage['text'],
+                          ),
+                          trailing: Text(
+                            latestMessage['time'].toDate().toString(),
+                          ),
                         ),
                       ),
                     );

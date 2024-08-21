@@ -35,9 +35,9 @@ class _SettingScreenState extends State<SettingScreen> {
       source: source,
       imageQuality: 50,
       maxWidth: 150,
-    );
+    ); 
 
-    if (pickedImageFile != null) {
+    if (pickedImageFile != null) { 
       // setState(() {
       //   _pickedImage = File(pickedImageFile.path);
       setState(() {

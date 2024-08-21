@@ -6,11 +6,6 @@ import 'package:zini_chat/widget/search_chat_room.dart';
 class FriendListScreen extends StatelessWidget {
   const FriendListScreen({super.key});
 
-  Future<void> _fetchUserName() async {
-    final QuerySnapshot snapshot =
-        await FirebaseFirestore.instance.collection('users').get();
-  }
-
   @override
   Widget build(BuildContext context) {
     return StreamBuilder(

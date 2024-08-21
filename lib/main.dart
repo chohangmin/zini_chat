@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:zini_chat/screen/main_screen.dart';
 import 'package:zini_chat/screen/sign_in_up_screen.dart';
-import 'package:zini_chat/screen/splash_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'package:firebase_auth/firebase_auth.dart';

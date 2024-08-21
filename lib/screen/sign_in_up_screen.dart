@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:zini_chat/widget/custom_text_field_form.dart';
@@ -23,7 +24,6 @@ class _SignInUpScreenState extends State<SignInUpScreen> {
 
   @override
   void dispose() {
-  
     super.dispose();
   }
 
@@ -59,7 +59,7 @@ class _SignInUpScreenState extends State<SignInUpScreen> {
               ),
             ),
             Positioned(
-              top: 160,
+              top: 250,
               left: 0,
               right: 0,
               child: Container(
@@ -242,14 +242,20 @@ class _SignInUpScreenState extends State<SignInUpScreen> {
                           }
                         }
                       },
-                      label: const Text('Submit'),
+                      style: ButtonStyle(
+                        textStyle:
+                            WidgetStateProperty.all<TextStyle>(const TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                        )),
+                        backgroundColor: WidgetStateProperty.all<Color>(
+                            Colors.lightBlue.shade100),
+                      ),
+                      label: const Text(
+                        'Submit',
+                      ),
                     ),
-                    Column(
-                      children: [
-                        Text('email : $_userEmail'),
-                        Text('password : $_userPassword'),
-                      ],
-                    )
                   ],
                 ),
               ),
