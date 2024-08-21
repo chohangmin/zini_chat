@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:zini_chat/widget/messages.dart';
 import 'package:zini_chat/widget/send_message.dart';
 
 class ChatListScreen extends StatelessWidget {
@@ -45,21 +46,98 @@ class ChatListScreen extends StatelessWidget {
           itemCount: userChatRooms.length,
           itemBuilder: (context, index) {
             var chatRoom = userChatRooms[index];
-            // FirebaseFirestore.instance.collection('chatRoom').doc(chatRoom.id).collection('messages')
-            final partnerInfo = FirebaseFirestore.instance
-                .collection('chatRoom')
-                .doc(chatRoom.id)
-                .collection('partnerInfo')
-                .get();
-            return Container(
-              child: Row(children: [
-                // Text(partnerInfo['userName']),
-                // CircleAvatar(backgroundImage: NetworkImage(partnerInfo['userImage']),),
-                ListTile(
-                  title: Text(chatRoom.id),
-                  onTap: () {},
-                ),
-              ]),
+
+            return StreamBuilder(
+              stream: FirebaseFirestore.instance
+                  .collection('chatRoom')
+                  .doc(chatRoom.id)
+                  .collection('messages')  
+                  .orderBy('time', descending: true)
+                  .limit(1)
+                  .snapshots(),
+              builder: (BuildContext context,
+                  AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
+
+                if (!snapshot.hasData) {
+                  return const Text('Data not found');
+                }
+
+                final latestMessage = snapshot.data!.docs.first.data();
+
+                return FutureBuilder(
+                  future: FirebaseFirestore.instance
+                      .collection('chatRoom')
+                      .doc(chatRoom.id)
+                      .collection('partnerInfo')
+                      .get(),
+                  builder: (BuildContext context,
+                      AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>>
+                          snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    }
+
+                    if (!snapshot.hasData) {
+                      return const Text('Data not found');
+                    }
+
+                    final partnerInfo = snapshot.data!.docs.first.data();
+
+                    return GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => Scaffold(
+                                appBar: AppBar(
+                                  title: Text(partnerInfo['userName']),
+                                  actions: [
+                                    IconButton(
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                      },
+                                      icon: const Icon(Icons.exit_to_app),
+                                    )
+                                  ],
+                                ),
+                                body: Column(
+                                  children: [
+                                    Expanded(child: Messages(chatRoom.id)),
+                                    SendMessage(
+                                      chatRoomId: chatRoom.id,
+                                      user1: currentUserId,
+                                      user2: partnerInfo['userId'],
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ));
+                      },
+                      child: Container(
+                        child: Row(children: [
+                          Text(partnerInfo['userName']),
+                          CircleAvatar(
+                            backgroundImage:
+                                NetworkImage(partnerInfo['userImage']),
+                          ),
+                          Expanded(
+                            child: ListTile(
+                              title: Text(latestMessage['text']),
+                            ),
+                          ),
+                        ]),
+                      ),
+                    );
+                  },
+                );
+              },
             );
           },
         );
