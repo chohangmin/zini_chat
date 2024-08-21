@@ -51,7 +51,7 @@ class ChatListScreen extends StatelessWidget {
               stream: FirebaseFirestore.instance
                   .collection('chatRoom')
                   .doc(chatRoom.id)
-                  .collection('messages')  
+                  .collection('messages')
                   .orderBy('time', descending: true)
                   .limit(1)
                   .snapshots(),
@@ -90,6 +90,8 @@ class ChatListScreen extends StatelessWidget {
 
                     final partnerInfo = snapshot.data!.docs.first.data();
 
+                    print('Time Check ${latestMessage['time'].toString()}');
+
                     return GestureDetector(
                       onTap: () {
                         Navigator.push(
@@ -120,19 +122,35 @@ class ChatListScreen extends StatelessWidget {
                               ),
                             ));
                       },
-                      child: Container(
-                        child: Row(children: [
-                          Text(partnerInfo['userName']),
-                          CircleAvatar(
-                            backgroundImage:
-                                NetworkImage(partnerInfo['userImage']),
-                          ),
-                          Expanded(
-                            child: ListTile(
-                              title: Text(latestMessage['text']),
-                            ),
-                          ),
-                        ]),
+                      child: Card(
+                        child: Container(
+                          padding: const EdgeInsets.all(5),
+                          child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    CircleAvatar(
+                                      backgroundImage: NetworkImage(
+                                          partnerInfo['userImage']),
+                                    ),
+                                    Text(partnerInfo['userName']),
+                                  ],
+                                ),
+                                Column(
+                                  children: [
+                                    Text(
+                                      latestMessage['text'],
+                                      style: const TextStyle(fontSize: 20),
+                                    ),
+                                    Text(latestMessage['time']
+                                        .toDate()
+                                        .toString()),
+                                  ],
+                                )
+                              ]),
+                        ),
                       ),
                     );
                   },
