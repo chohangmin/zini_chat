@@ -35,9 +35,9 @@ class _SettingScreenState extends State<SettingScreen> {
       source: source,
       imageQuality: 50,
       maxWidth: 150,
-    ); 
+    );
 
-    if (pickedImageFile != null) { 
+    if (pickedImageFile != null) {
       // setState(() {
       //   _pickedImage = File(pickedImageFile.path);
       setState(() {
@@ -98,138 +98,159 @@ class _SettingScreenState extends State<SettingScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: GestureDetector(
-        onTap: () {
-          Focus.of(context).unfocus();
-        },
-        child: Column(
-          children: [
-            Row(
+    return StreamBuilder(
+      stream: FirebaseFirestore.instance
+          .collection('users')
+          .doc(userUid)
+          .snapshots(),
+      builder: (BuildContext context,
+          AsyncSnapshot<DocumentSnapshot<Map<String, dynamic>>> snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        }
+
+        if (!snapshot.hasData) {
+          return const Text('No data found');
+        }
+
+        final userDocs = snapshot.data!.data();
+
+        return Scaffold(
+          body: GestureDetector(
+            onTap: () {
+              Focus.of(context).unfocus();
+            },
+            child: Column(
               children: [
-                Expanded(
-                  child: Form(
-                    key: _formKey,
-                    child: TextFormField(
-                      key: const ValueKey(1),
-                      controller: _userNameController,
-                      decoration: const InputDecoration(
-                        prefixIcon: Icon(Icons.person),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.all(
-                            Radius.circular(20),
+                Row(
+                  children: [
+                    Expanded(
+                      child: Form(
+                        key: _formKey,
+                        child: TextFormField(
+                          key: const ValueKey(1),
+                          controller: _userNameController,
+                          decoration: const InputDecoration(
+                            prefixIcon: Icon(Icons.person),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(20),
+                              ),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(20),
+                              ),
+                            ),
                           ),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.all(
-                            Radius.circular(20),
-                          ),
+                          validator: (value) {
+                            if (value!.isEmpty) {
+                              return 'Please enter user name';
+                            }
+                            if (_userNames.contains(value)) {
+                              return 'Entered user name is existing... Change user name';
+                            }
+
+                            return null;
+                          },
                         ),
                       ),
-                      validator: (value) {
-                        if (value!.isEmpty) {
-                          return 'Please enter user name';
-                        }
-                        if (_userNames.contains(value)) {
-                          return 'Entered user name is existing... Change user name';
-                        }
-
-                        return null;
-                      },
                     ),
-                  ),
+                    const SizedBox(
+                      width: 10,
+                    ),
+                    ElevatedButton(
+                      onPressed: () {
+                        if (_formKey.currentState!.validate()) {
+                          final userName = _userNameController.text;
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Change user name successful!'),
+                            ),
+                          );
+                          FirebaseFirestore.instance
+                              .collection('users')
+                              .doc(userUid)
+                              .update({'userName': userName});
+                          _fetchUserNames();
+                          _userNameController.clear();
+                        }
+                      },
+                      child: const Text('Submit'),
+                    ),
+                  ],
                 ),
                 const SizedBox(
-                  width: 10,
+                  height: 30,
                 ),
-                ElevatedButton(
-                  onPressed: () {
-                    if (_formKey.currentState!.validate()) {
-                      final userName = _userNameController.text;
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Change user name successful!'),
-                        ),
-                      );
-                      FirebaseFirestore.instance
-                          .collection('users')
-                          .doc(userUid)
-                          .update({'userName': userName});
-                      _fetchUserNames();
-                      _userNameController.clear();
-                    }
-                  },
-                  child: const Text('Submit'),
-                ),
-              ],
-            ),
-            const SizedBox(
-              height: 30,
-            ),
-            Row(
-              children: [
-                GestureDetector(
-                  child: CircleAvatar(
-                    radius: 40,
-                    backgroundImage:
-                        userImage == null ? null : NetworkImage(userUrl),
-                  ),
-                  onTap: () {
-                    print('[test circle avartar] $userUrl');
-                    showDialog(
-                      context: context,
-                      builder: (context) => Dialog(
-                        backgroundColor: Colors.white,
-                        child: Container(
-                          padding: const EdgeInsets.all(20),
-                          width: 150,
-                          height: 300,
-                          child: Column(
-                            children: [
-                              ListTile(
-                                leading: const Icon(Icons.camera),
-                                title: const Text('Camera'),
-                                onTap: () {
-                                  _pickImage(ImageSource.camera);
-                                },
-                              ),
-                              ListTile(
-                                leading: const Icon(Icons.photo_library),
-                                title: const Text('Gallery'),
-                                onTap: () {
-                                  _pickImage(ImageSource.gallery);
-                                },
-                              ),
-                              ListTile(
-                                leading: const Icon(Icons.person),
-                                title: const Text('Default image'),
-                                onTap: () async {
-                                  await FirebaseFirestore.instance
-                                      .collection('users')
-                                      .doc(userUid)
-                                      .update({'userImage': null});
-
-                                  FirebaseStorage.instance
-                                      .ref()
-                                      .child('user_image')
-                                      .child('$userUid.jpg')
-                                      .delete();
-                                },
-                              ),
-                            ],
-                          ),
-                        ),
+                Row(
+                  children: [
+                    GestureDetector(
+                      child: CircleAvatar(
+                        radius: 40,
+                        backgroundImage:
+                            userImage == null ? null : NetworkImage(userUrl),
                       ),
-                    );
+                      onTap: () {
+                        print('[test circle avartar] $userUrl');
+                        showDialog(
+                          context: context,
+                          builder: (context) => Dialog(
+                            backgroundColor: Colors.white,
+                            child: Container(
+                              padding: const EdgeInsets.all(20),
+                              width: 150,
+                              height: 300,
+                              child: Column(
+                                children: [
+                                  ListTile(
+                                    leading: const Icon(Icons.camera),
+                                    title: const Text('Camera'),
+                                    onTap: () {
+                                      _pickImage(ImageSource.camera);
+                                    },
+                                  ),
+                                  ListTile(
+                                    leading: const Icon(Icons.photo_library),
+                                    title: const Text('Gallery'),
+                                    onTap: () {
+                                      _pickImage(ImageSource.gallery);
+                                    },
+                                  ),
+                                  ListTile(
+                                    leading: const Icon(Icons.person),
+                                    title: const Text('Default image'),
+                                    onTap: () async {
+                                      await FirebaseFirestore.instance
+                                          .collection('users')
+                                          .doc(userUid)
+                                          .update({'userImage': null});
 
-                    // _fetchUserImage();
-                  },
-                )
+                                      FirebaseStorage.instance
+                                          .ref()
+                                          .child('user_image')
+                                          .child('$userUid.jpg')
+                                          .delete();
+                                    },
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        );
+
+                        // _fetchUserImage();
+                      },
+                    )
+                  ],
+                ),
               ],
             ),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 }
