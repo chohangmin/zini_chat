@@ -66,11 +66,14 @@ class _SendMessageState extends State<SendMessage> {
       FirebaseFirestore.instance
           .collection('chatRoom')
           .doc(widget.chatRoomId)
-          .collection('partnerInfo')
+          .collection('usersInfo')
           .add({
-        'userId': userData2.data()!['userId'],
-        'userName': userData2.data()!['userName'],
-        'userImage': userData2.data()!['userImage'],
+        'user1Id': userData1.data()!['userId'],
+        'user1Name': userData1.data()!['userName'],
+        'user1Image': userData1.data()!['userImage'],
+        'user2Id': userData2.data()!['userId'],
+        'user2Name': userData2.data()!['userName'],
+        'user2Image': userData2.data()!['userImage'],
       });
     }
 

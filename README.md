@@ -15,6 +15,9 @@ For help getting started with Flutter development, view the
 [online documentation](https://docs.flutter.dev/), which offers tutorials,
 samples, guidance on mobile development, and a full API reference.
 
+시발 로그인할때 계속 데이터베이스에 데이터 적재하는 시간과 화면이 바뀌는 시간이 겹쳐서 에러가 발생한다 슈발
+지금 splashScreen을 이용하려 하고 있는데 잘 안됨. 
+
 
 1. 채팅창 최신순 정렬
 2. 친구창 친구도 정렬

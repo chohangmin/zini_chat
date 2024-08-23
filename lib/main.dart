@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:zini_chat/screen/main_screen.dart';
 import 'package:zini_chat/screen/sign_in_up_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:zini_chat/screen/splash_screen.dart';
 import 'firebase_options.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart' show rootBundle;
@@ -29,21 +30,29 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
-      ),
-      home: StreamBuilder<User?>(
-        stream: auth.authStateChanges(),
-        builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            return const MainScreen();
-          }
-          return const SignInUpScreen();
-        },
-      ),
-    );
+        title: 'Flutter Demo',
+        theme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+          useMaterial3: true,
+        ),
+        home: StreamBuilder<User?>(
+          stream: auth.authStateChanges(),
+          builder: (context, snapshot) {
+            return FutureBuilder(
+                future: Future.delayed(const Duration(milliseconds: 1000)),
+                builder: (context, delaySnapshot) {
+                  if (delaySnapshot.connectionState ==
+                      ConnectionState.waiting) {
+                    return const SplashScreen();
+                  }
+
+                  if (snapshot.hasData) {
+                    return const MainScreen();
+                  }
+                  return const SignInUpScreen();
+                });
+          },
+        ));
   }
 }
 

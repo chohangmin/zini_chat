@@ -69,12 +69,12 @@ class ChatListScreen extends StatelessWidget {
 
                 final latestMessage = snapshot.data!.docs.first.data();
 
-                return FutureBuilder(
-                  future: FirebaseFirestore.instance
+                return StreamBuilder(
+                  stream: FirebaseFirestore.instance
                       .collection('chatRoom')
                       .doc(chatRoom.id)
                       .collection('partnerInfo')
-                      .get(),
+                      .snapshots(),
                   builder: (BuildContext context,
                       AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>>
                           snapshot) {

@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -187,58 +188,68 @@ class _SignInUpScreenState extends State<SignInUpScreen> {
                           ],
                         ),
                       ),
+                    const SizedBox(
+                      height: 20,
+                    ),
                     ElevatedButton.icon(
                       onPressed: () async {
                         if (isSignIn) {
                           if (formKey.currentState!.validate()) {
                             formKey.currentState!.save();
 
-                            final user = await _authentication
-                                .signInWithEmailAndPassword(
-                              email: _userEmail,
-                              password: _userPassword,
-                            );
+                            try {
+                              final user = await _authentication
+                                  .signInWithEmailAndPassword(
+                                email: _userEmail,
+                                password: _userPassword,
+                              );
 
-                            await FirebaseFirestore.instance
-                                .collection('users')
-                                .doc(user.user!.uid)
-                                .update({'isConnecting': true});
-
-                            // ScaffoldMessenger.of(context).showSnackBar(
-                            //   const SnackBar(
-                            //     content: Text('Sign In Success!!'),
-                            //   ),
-                            // );
+                              await FirebaseFirestore.instance
+                                  .collection('users')
+                                  .doc(user.user!.uid)
+                                  .update({'isConnecting': true});
+                            } catch (e) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                      content:
+                                          Text('Login is failed, error : $e')));
+                            }
                           }
                         } else {
                           if (formKey.currentState!.validate()) {
                             formKey.currentState!.save();
 
-                            final newUser = await _authentication
-                                .createUserWithEmailAndPassword(
-                              email: _userEmail,
-                              password: _userPassword,
-                            );
+                            try {
+                              final newUser = await _authentication
+                                  .createUserWithEmailAndPassword(
+                                email: _userEmail,
+                                password: _userPassword,
+                              );
 
-                            WordPair randomName = WordPair.random();
+                              final defaultImageUrl = await FirebaseStorage
+                                  .instance
+                                  .ref()
+                                  .child('default_image')
+                                  .child('default_image.png')
+                                  .getDownloadURL();
 
-                            await FirebaseFirestore.instance
-                                .collection('users')
-                                .doc(newUser.user!.uid)
-                                .set({
-                              'userId': newUser.user!.uid,
-                              'userName': randomName.asPascalCase,
-                              'userImage': null,
-                              'isConnecting': true,
-                            });
+                              WordPair randomName = WordPair.random();
 
-                            // if (newUser != null) {}
-
-                            // ScaffoldMessenger.of(context).showSnackBar(
-                            //   const SnackBar(
-                            //     content: Text('Sign Up Success!!'),
-                            //   ),
-                            // );
+                              await FirebaseFirestore.instance
+                                  .collection('users')
+                                  .doc(newUser.user!.uid)
+                                  .set({
+                                'userId': newUser.user!.uid,
+                                'userName': randomName.asPascalCase,
+                                'userImage': defaultImageUrl,
+                                'isConnecting': true,
+                              });
+                            } catch (e) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                      content: Text(
+                                          'Signup is failed, error : $e')));
+                            }
                           }
                         }
                       },

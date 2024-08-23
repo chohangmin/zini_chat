@@ -191,7 +191,7 @@ class _SettingScreenState extends State<SettingScreen> {
                       child: CircleAvatar(
                         radius: 40,
                         backgroundImage:
-                            userImage == null ? null : NetworkImage(userUrl),
+                            userImage == null ? NetworkImage(userDocs!['userImage']) : NetworkImage(userUrl),
                       ),
                       onTap: () {
                         print('[test circle avartar] $userUrl');
