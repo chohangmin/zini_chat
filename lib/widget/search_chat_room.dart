@@ -10,6 +10,10 @@ class SearchChatRoom extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (user1 == user2) {
+      Navigator.pop(context, true);
+      print("test // id is same!");
+    }
     List<String> userIds = [user1, user2];
     userIds.sort();
     String chatRoomId = userIds[0] + userIds[1];

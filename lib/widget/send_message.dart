@@ -48,7 +48,7 @@ class _SendMessageState extends State<SendMessage> {
         .get();
     final userData2 = await FirebaseFirestore.instance
         .collection('users')
-        .doc(widget.user1)
+        .doc(widget.user2)
         .get();
     print('test 2');
 

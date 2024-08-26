@@ -45,7 +45,7 @@ class FriendListScreen extends StatelessWidget {
                                   title: const Text('1 : 1 chat'),
                                   onTap: () async {
                                     print('click');
-                                    Navigator.push(context,
+                                    final result = await Navigator.push(context,
                                         MaterialPageRoute(builder: (context) {
                                       return SearchChatRoom(
                                         user1: FirebaseAuth
@@ -53,9 +53,15 @@ class FriendListScreen extends StatelessWidget {
                                         user2: userDocs[index]['userId'],
                                       );
                                     }));
+                                    if (result == true) {
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(SnackBar(
+                                              content: Text("Id is same")));
+                                    }
                                     print(
                                         "test user 1 ${FirebaseAuth.instance.currentUser!.uid}");
-                                    print("test user 2 ${userDocs[index]['userId']}");
+                                    print(
+                                        "test user 2 ${userDocs[index]['userId']}");
                                     print('CLICK');
                                   },
                                 )
