@@ -5,6 +5,16 @@ class GroupChatList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return Scaffold(
+      body: Column(
+        children: [
+          FloatingActionButton.extended(
+            onPressed: () {},
+            label: const Text('Add Group'),
+            icon: const Icon(Icons.person_search_sharp),
+          ),
+        ],
+      ),
+    );
   }
 }
