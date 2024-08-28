@@ -8,10 +8,14 @@ class GroupChatList extends StatelessWidget {
     return Scaffold(
       body: Column(
         children: [
-          FloatingActionButton.extended(
-            onPressed: () {},
-            label: const Text('Add Group'),
-            icon: const Icon(Icons.person_search_sharp),
+          Positioned(
+            bottom: 100,
+            left: 10,
+            child: FloatingActionButton.extended(
+              onPressed: () {},
+              label: const Text('Add Group'),
+              icon: const Icon(Icons.person_add),
+            ),
           ),
         ],
       ),

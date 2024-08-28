@@ -72,6 +72,7 @@ class _MainScreenState extends State<MainScreen> {
         ],
         currentIndex: _selectedIndex,
         selectedItemColor: Colors.blue,
+        unselectedItemColor: Colors.blue.shade300,
         onTap: _onItemTapped,
       ),
     );
