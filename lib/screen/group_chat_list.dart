@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:zini_chat/widget/search_group_chat_room.dart';
 
 class GroupChatList extends StatefulWidget {
   const GroupChatList({super.key});
@@ -90,6 +91,25 @@ class _GroupChatListState extends State<GroupChatList> {
                             ElevatedButton(
                                 onPressed: () {
                                   print('test $_selectedUsers');
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => Scaffold(
+                                                appBar: AppBar(
+                                                  actions: [
+                                                    IconButton(
+                                                        onPressed: () {
+                                                          Navigator.pop(
+                                                              context);
+                                                        },
+                                                        icon: const Icon(
+                                                            Icons.exit_to_app))
+                                                  ],
+                                                ),
+                                                body: SearchGroupChatRoom(
+                                                  invitedUsers: _selectedUsers,
+                                                ),
+                                              )));
                                 },
                                 child: const Text('Submit')),
                           ],
