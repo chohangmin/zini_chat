@@ -62,12 +62,18 @@ Future<void> checkAndInitializeData() async {
 
   final docSnapshot = await docRef.get();
 
+  print("init test");
+
+  print("init ${docSnapshot.exists}");
+
   if (!docSnapshot.exists || docSnapshot.data()?['initialized'] != true) {
     await initializeFirebaseStorageData();
 
     await docRef.set({
       'initialized': true,
     });
+  } else {
+    print("init why?");
   }
 }
 
@@ -81,8 +87,8 @@ Future<void> initializeFirebaseStorageData() async {
 
   try {
     await storageRef.putData(fileBytes);
-    print('File upload succesfully!');
+    print('INIT File upload succesfully!');
   } catch (e) {
-    print('File upload failed : $e');
+    print('INIT File upload failed : $e');
   }
 }
