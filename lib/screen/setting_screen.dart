@@ -7,7 +7,9 @@ import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 
 class SettingScreen extends StatefulWidget {
-  const SettingScreen({super.key});
+  const SettingScreen({required this.currentUserId,super.key});
+
+  final String currentUserId;
 
   @override
   State<SettingScreen> createState() => _SettingScreenState();

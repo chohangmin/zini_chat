@@ -3,8 +3,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:zini_chat/widget/search_chat_room.dart';
 
-class FriendListScreen extends StatelessWidget {
-  const FriendListScreen({super.key});
+class FriendScreen extends StatelessWidget {
+  const FriendScreen({required this.currentUserId,super.key});
+
+  final String currentUserId;
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +28,7 @@ class FriendListScreen extends StatelessWidget {
           return ListView.builder(
               itemCount: userDocs.length,
               itemBuilder: (context, index) {
-                print('User Image URL: ${userDocs[index]['userImage']}');
+               
                 return Opacity(
                   opacity: userDocs[index]['isConnecting'] ? 1 : 0.7,
                   child: GestureDetector(

@@ -26,33 +26,32 @@ void main() async {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        title: 'Flutter Demo',
-        theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-          useMaterial3: true,
-        ),
-        home: StreamBuilder<User?>(
-          stream: auth.authStateChanges(),
-          builder: (context, snapshot) {
-            return FutureBuilder(
-                future: Future.delayed(const Duration(milliseconds: 1000)),
-                builder: (context, delaySnapshot) {
-                  if (delaySnapshot.connectionState ==
-                      ConnectionState.waiting) {
-                    return const SplashScreen();
-                  }
+      title: 'Flutter Demo',
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        useMaterial3: true,
+      ),
+      home: StreamBuilder<User?>(
+        stream: auth.authStateChanges(),
+        builder: (context, snapshot) {
+          return FutureBuilder(
+              future: Future.delayed(const Duration(milliseconds: 1000)),
+              builder: (context, delaySnapshot) {
+                if (delaySnapshot.connectionState == ConnectionState.waiting) {
+                  return const SplashScreen();
+                }
 
-                  if (snapshot.hasData) {
-                    return const MainScreen();
-                  }
-                  return const SignInUpScreen();
-                });
-          },
-        ));
+                if (snapshot.hasData) {
+                  return const MainScreen();
+                }
+                return const SignInUpScreen();
+              });
+        },
+      ),
+    );
   }
 }
 
@@ -62,18 +61,12 @@ Future<void> checkAndInitializeData() async {
 
   final docSnapshot = await docRef.get();
 
-  print("init test");
-
-  print("init ${docSnapshot.exists}");
-
-  if (!docSnapshot.exists || docSnapshot.data()?['initialized'] != true) {
+  if (!docSnapshot.exists) {
     await initializeFirebaseStorageData();
 
     await docRef.set({
       'initialized': true,
     });
-  } else {
-    print("init why?");
   }
 }
 

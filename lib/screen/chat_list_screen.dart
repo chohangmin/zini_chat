@@ -6,7 +6,10 @@ import 'package:zini_chat/widget/send_message.dart';
 import 'package:zini_chat/widget/zini_user_info.dart';
 
 class ChatListScreen extends StatelessWidget {
-  const ChatListScreen({super.key});
+  const ChatListScreen({required this.currentUserId,super.key});
+
+
+  final String currentUserId;
 
   @override
   Widget build(BuildContext context) {

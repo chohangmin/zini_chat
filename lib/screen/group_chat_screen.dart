@@ -6,7 +6,9 @@ import 'package:zini_chat/widget/group_chat_list.dart';
 import 'package:zini_chat/widget/search_group_chat_room.dart';
 
 class GroupChatScreen extends StatefulWidget {
-  const GroupChatScreen({super.key});
+  const GroupChatScreen({required this.currentUserId,super.key});
+
+  final String currentUserId;
 
   @override
   State<GroupChatScreen> createState() => _GroupChatListState();

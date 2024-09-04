@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:zini_chat/screen/chat_list_screen.dart';
-import 'package:zini_chat/screen/friend_list_screen.dart';
+import 'package:zini_chat/screen/friend_screen.dart';
 import 'package:zini_chat/screen/group_chat_screen.dart';
 import 'package:zini_chat/screen/setting_screen.dart';
 
@@ -15,14 +15,11 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   final _authentication = FirebaseAuth.instance;
+  late final String _currentUserId;
+
   int _selectedIndex = 0;
 
-  static const List<Widget> _widgetOptions = [
-    FriendListScreen(),
-    ChatListScreen(),
-    GroupChatScreen(),
-    SettingScreen(),
-  ];
+  late List<Widget> _widgetOptions;
 
   void _onItemTapped(int index) {
     setState(() {
@@ -31,16 +28,28 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    _currentUserId = FirebaseAuth.instance.currentUser!.uid;
+    _widgetOptions = [
+      FriendScreen(currentUserId: _currentUserId),
+       ChatListScreen(currentUserId: _currentUserId),
+       GroupChatScreen(currentUserId: _currentUserId),
+       SettingScreen(currentUserId: _currentUserId),
+    ];
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Main Screen'),
+        title: const Text('Zini Chat'),
         actions: [
           IconButton(
               onPressed: () async {
                 await FirebaseFirestore.instance
                     .collection('users')
-                    .doc(_authentication.currentUser!.uid)
+                    .doc(_currentUserId)
                     .update({'isConnecting': false});
                 _authentication.signOut();
               },
