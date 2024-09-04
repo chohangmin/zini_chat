@@ -4,15 +4,17 @@ import 'package:flutter/material.dart';
 import 'package:zini_chat/widget/chat_bubble.dart';
 
 class Messages extends StatelessWidget {
-  const Messages(this.chatRoomId, {super.key});
+  const Messages({required this.chatRoomId, required this.type, super.key});
 
   final String chatRoomId;
+
+  final String type;
 
   @override
   Widget build(BuildContext context) {
     return StreamBuilder(
       stream: FirebaseFirestore.instance
-          .collection('chatRoom')
+          .collection(type)
           .doc(chatRoomId)
           .collection('messages')
           .orderBy('time')

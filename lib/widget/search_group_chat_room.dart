@@ -19,8 +19,11 @@ class SearchGroupChatRoom extends StatelessWidget {
       return Scaffold(
         body: Column(
           children: [
-            Expanded(child: Messages(chatRoomId)),
-            SendGroupMessage(chatRoomId: chatRoomId,)
+            Expanded(
+                child: Messages(chatRoomId: chatRoomId, type: "groupChatRoom")),
+            SendGroupMessage(
+              chatRoomId: chatRoomId,
+            )
           ],
         ),
       );

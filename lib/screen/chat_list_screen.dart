@@ -124,7 +124,11 @@ class ChatListScreen extends StatelessWidget {
                                 ),
                                 body: Column(
                                   children: [
-                                    Expanded(child: Messages(chatRoom.id)),
+                                    Expanded(
+                                        child: Messages(
+                                      chatRoomId: chatRoom.id,
+                                      type: "chatRoom",
+                                    )),
                                     SendMessage(
                                       chatRoomId: chatRoom.id,
                                       user1: currentUserId == user1.id
@@ -141,19 +145,27 @@ class ChatListScreen extends StatelessWidget {
                       },
                       child: Card(
                         child: ListTile(
-                          leading: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              CircleAvatar(
-                                backgroundImage: NetworkImage(
-                                    currentUserId == user1.id
-                                        ? user2.image
-                                        : user1.image),
-                              ),
-                              Text(currentUserId == user1.id
-                                  ? user2.name
-                                  : user1.name),
-                            ],
+                          leading: Container(
+                            margin: const EdgeInsets.all(1),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                SizedBox(
+                                  width: 30,
+                                  height: 30,
+                                  child: CircleAvatar(
+                                    backgroundImage: NetworkImage(
+                                        currentUserId == user1.id
+                                            ? user2.image
+                                            : user1.image),
+                                  ),
+                                ),
+                                Text(currentUserId == user1.id
+                                    ? user2.name
+                                    : user1.name),
+                              ],
+                            ),
                           ),
                           title: Text(
                             latestMessage['text'],

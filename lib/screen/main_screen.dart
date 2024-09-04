@@ -3,7 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:zini_chat/screen/chat_list_screen.dart';
 import 'package:zini_chat/screen/friend_list_screen.dart';
-import 'package:zini_chat/screen/group_chat_list.dart';
+import 'package:zini_chat/screen/group_chat_screen.dart';
 import 'package:zini_chat/screen/setting_screen.dart';
 
 class MainScreen extends StatefulWidget {
@@ -20,7 +20,7 @@ class _MainScreenState extends State<MainScreen> {
   static const List<Widget> _widgetOptions = [
     FriendListScreen(),
     ChatListScreen(),
-    GroupChatList(),
+    GroupChatScreen(),
     SettingScreen(),
   ];
 

@@ -25,7 +25,7 @@ class SearchChatRoom extends StatelessWidget {
     return Scaffold(
       body: Column(
         children: [
-          Expanded(child: Messages(chatRoomId)),
+          Expanded(child: Messages(chatRoomId: chatRoomId, type: "chatRoom")),
           SendMessage(chatRoomId: chatRoomId, user1: user1, user2: user2),
         ],
       ),

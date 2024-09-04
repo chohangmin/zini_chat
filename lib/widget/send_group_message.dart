@@ -54,7 +54,14 @@ class _SendGroupMessageState extends State<SendGroupMessage> {
         .doc(widget.chatRoomId)
         .get();
 
-    if (chatDocRef.exists) {
+    print("test 1");
+
+    if (!chatDocRef.exists) {
+      FirebaseFirestore.instance
+          .collection('groupChatRoom')
+          .doc(widget.chatRoomId)
+          .set({});
+
       FirebaseFirestore.instance
           .collection('groupChatRoom')
           .doc(widget.chatRoomId)
@@ -66,6 +73,10 @@ class _SendGroupMessageState extends State<SendGroupMessage> {
         'userName': currentUserName,
         'userImage': currentUserImage,
       });
+
+      print("test 2");
+
+      myController.clear();
     }
   }
 
