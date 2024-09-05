@@ -3,10 +3,16 @@ import 'package:zini_chat/widget/messages.dart';
 import 'package:zini_chat/widget/send_message.dart';
 
 class SearchChatRoom extends StatelessWidget {
-  const SearchChatRoom({super.key, required this.user1, required this.user2});
+  const SearchChatRoom(
+      {super.key,
+      required this.currentUserId,
+      required this.user1,
+      required this.user2});
 
   final String user1;
   final String user2;
+
+  final String currentUserId;
 
   @override
   Widget build(BuildContext context) {
@@ -25,8 +31,12 @@ class SearchChatRoom extends StatelessWidget {
     return Scaffold(
       body: Column(
         children: [
-          Expanded(child: Messages(chatRoomId: chatRoomId, type: "chatRoom")),
-          SendMessage(chatRoomId: chatRoomId, user1: user1, user2: user2),
+          Expanded(
+              child: Messages(
+                  chatRoomId: chatRoomId,
+                  currentUserId: currentUserId,
+                  type: "chatRoom")),
+          SendMessage(chatRoomId: chatRoomId, currentUserId: currentUserId,),
         ],
       ),
     );

@@ -1,13 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:zini_chat/widget/messages.dart';
 import 'package:zini_chat/widget/send_message.dart';
-import 'package:zini_chat/widget/zini_user_info.dart';
 
 class ChatListScreen extends StatelessWidget {
-  const ChatListScreen({required this.currentUserId,super.key});
-
+  const ChatListScreen({required this.currentUserId, super.key});
 
   final String currentUserId;
 
@@ -22,8 +19,6 @@ class ChatListScreen extends StatelessWidget {
             child: CircularProgressIndicator(),
           );
         }
-
-        final currentUserId = FirebaseAuth.instance.currentUser!.uid;
 
         final chatRoomDocs = snapshot.data!.docs;
 
@@ -51,6 +46,8 @@ class ChatListScreen extends StatelessWidget {
           itemBuilder: (context, index) {
             var chatRoom = userChatRooms[index];
 
+            String opponentUserId = chatRoom.id.replaceAll(currentUserId, '');
+
             return StreamBuilder(
               stream: FirebaseFirestore.instance
                   .collection('chatRoom')
@@ -68,19 +65,18 @@ class ChatListScreen extends StatelessWidget {
                 }
 
                 if (!snapshot.hasData) {
-                  return const Text('Data not found');
+                  return const Text('No message data found in chat room');
                 }
 
                 final latestMessage = snapshot.data!.docs.first.data();
 
                 return StreamBuilder(
                   stream: FirebaseFirestore.instance
-                      .collection('chatRoom')
-                      .doc(chatRoom.id)
-                      .collection('usersInfo')
+                      .collection('users')
+                      .doc(opponentUserId)
                       .snapshots(),
                   builder: (BuildContext context,
-                      AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>>
+                      AsyncSnapshot<DocumentSnapshot<Map<String, dynamic>>>
                           snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return const Center(
@@ -89,23 +85,11 @@ class ChatListScreen extends StatelessWidget {
                     }
 
                     if (!snapshot.hasData) {
-                      return const Text('Data not found');
+                      return const Text('No opponent user found.');
                     }
 
-                    final usersInfo = snapshot.data!.docs.first.data();
-
-                    final user1 = ZiniUserInfo(
-                        id: usersInfo['user1Id'],
-                        image: usersInfo['user1Image'],
-                        name: usersInfo['user1Name']);
-
-                    final user2 = ZiniUserInfo(
-                        id: usersInfo['user2Id'],
-                        image: usersInfo['user2Image'],
-                        name: usersInfo['user2Name']);
-
-                    print('Time Check ${latestMessage['time'].toString()}');
-
+                    final opponentUserInfo = snapshot.data;
+      
                     return GestureDetector(
                       onTap: () {
                         Navigator.push(
@@ -113,9 +97,7 @@ class ChatListScreen extends StatelessWidget {
                             MaterialPageRoute(
                               builder: (context) => Scaffold(
                                 appBar: AppBar(
-                                  title: currentUserId == user1.id
-                                      ? Text(user1.name)
-                                      : Text(user2.name),
+                                  title: opponentUserInfo['userName'],
                                   actions: [
                                     IconButton(
                                       onPressed: () {
@@ -130,16 +112,13 @@ class ChatListScreen extends StatelessWidget {
                                     Expanded(
                                         child: Messages(
                                       chatRoomId: chatRoom.id,
+                                      currentUserId: currentUserId,
                                       type: "chatRoom",
                                     )),
                                     SendMessage(
                                       chatRoomId: chatRoom.id,
-                                      user1: currentUserId == user1.id
-                                          ? user1.id
-                                          : user2.id,
-                                      user2: currentUserId != user1.id
-                                          ? user1.id
-                                          : user2.id,
+                                      currentUserId: currentUserId,
+
                                     ),
                                   ],
                                 ),
@@ -159,14 +138,10 @@ class ChatListScreen extends StatelessWidget {
                                   height: 30,
                                   child: CircleAvatar(
                                     backgroundImage: NetworkImage(
-                                        currentUserId == user1.id
-                                            ? user2.image
-                                            : user1.image),
+                                        opponentUserInfo!['userImage']),
                                   ),
                                 ),
-                                Text(currentUserId == user1.id
-                                    ? user2.name
-                                    : user1.name),
+                                Text(opponentUserInfo['userName']),
                               ],
                             ),
                           ),

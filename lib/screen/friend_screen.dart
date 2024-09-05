@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:zini_chat/widget/search_chat_room.dart';
 
 class FriendScreen extends StatelessWidget {
-  const FriendScreen({required this.currentUserId,super.key});
+  const FriendScreen({required this.currentUserId, super.key});
 
   final String currentUserId;
 
@@ -25,10 +25,24 @@ class FriendScreen extends StatelessWidget {
 
           final userDocs = snapshot.data!.docs;
 
+          QueryDocumentSnapshot<Map<String, dynamic>>? currentUserDoc;
+
+          try {
+            currentUserDoc = userDocs.firstWhere(
+              (doc) => doc['userId'] == currentUserId,
+            );
+          } catch (e) {
+            currentUserDoc = null;
+          }
+
+          if (currentUserDoc != null) {
+            userDocs.remove(currentUserDoc);
+            userDocs.insert(0, currentUserDoc);
+          }
+
           return ListView.builder(
               itemCount: userDocs.length,
               itemBuilder: (context, index) {
-               
                 return Opacity(
                   opacity: userDocs[index]['isConnecting'] ? 1 : 0.7,
                   child: GestureDetector(
@@ -50,21 +64,17 @@ class FriendScreen extends StatelessWidget {
                                     final result = await Navigator.push(context,
                                         MaterialPageRoute(builder: (context) {
                                       return SearchChatRoom(
-                                        user1: FirebaseAuth
-                                            .instance.currentUser!.uid,
+                                        user1: currentUserId,
                                         user2: userDocs[index]['userId'],
+                                        currentUserId: currentUserId,
                                       );
                                     }));
                                     if (result == true) {
                                       ScaffoldMessenger.of(context)
-                                          .showSnackBar(SnackBar(
+                                          .showSnackBar(const SnackBar(
                                               content: Text("Id is same")));
                                     }
-                                    print(
-                                        "test user 1 ${FirebaseAuth.instance.currentUser!.uid}");
-                                    print(
-                                        "test user 2 ${userDocs[index]['userId']}");
-                                    print('CLICK');
+                                    
                                   },
                                 )
                               ],

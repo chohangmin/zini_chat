@@ -3,9 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:zini_chat/widget/search_group_chat_room.dart';
 
 class AddGroup extends StatelessWidget {
-  const AddGroup({required this.selectedUsers, super.key});
+  const AddGroup({required this.selectedUsers, required this.currentUserId,super.key});
 
   final Set<String> selectedUsers;
+  final String currentUserId;
 
   @override
   Widget build(BuildContext context) {
@@ -94,6 +95,8 @@ class AddGroup extends StatelessWidget {
                                         ),
                                         body: SearchGroupChatRoom(
                                           invitedUsers: selectedUsers,
+                                          currentUserId: currentUserId,
+
                                         ),
                                       )));
                         },

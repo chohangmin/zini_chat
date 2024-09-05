@@ -5,7 +5,9 @@ import 'package:zini_chat/widget/messages.dart';
 import 'package:zini_chat/widget/send_group_message.dart';
 
 class GroupChatList extends StatelessWidget {
-  const GroupChatList({super.key});
+  const GroupChatList({super.key, required this.currentUserId});
+
+  final String currentUserId;
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +22,7 @@ class GroupChatList extends StatelessWidget {
           );
         }
 
-        final currentUserId = FirebaseAuth.instance.currentUser!.uid;
+    
         final groupChatRoomDocs = snapshot.data!.docs;
 
         if (groupChatRoomDocs.isEmpty) {
@@ -88,10 +90,14 @@ class GroupChatList extends StatelessWidget {
                               Expanded(
                                 child: Messages(
                                   chatRoomId: chatRoom.id,
+                                  currentUserId: currentUserId,
                                   type: "groupChatRoom",
                                 ),
                               ),
-                              SendGroupMessage(chatRoomId: chatRoom.id),
+                              SendGroupMessage(
+                                chatRoomId: chatRoom.id,
+                                currentUserId: currentUserId,
+                              ),
                             ],
                           ),
                         ),

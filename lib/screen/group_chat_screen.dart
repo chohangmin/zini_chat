@@ -6,7 +6,7 @@ import 'package:zini_chat/widget/group_chat_list.dart';
 import 'package:zini_chat/widget/search_group_chat_room.dart';
 
 class GroupChatScreen extends StatefulWidget {
-  const GroupChatScreen({required this.currentUserId,super.key});
+  const GroupChatScreen({required this.currentUserId, super.key});
 
   final String currentUserId;
 
@@ -21,10 +21,15 @@ class _GroupChatListState extends State<GroupChatScreen> {
     return Scaffold(
       body: Column(
         children: [
-          const Expanded(
-            child: GroupChatList(),
+          Expanded(
+            child: GroupChatList(
+              currentUserId: widget.currentUserId,
+            ),
           ),
-          AddGroup(selectedUsers: _selectedUsers),
+          AddGroup(
+            selectedUsers: _selectedUsers,
+            currentUserId: widget.currentUserId,
+          ),
         ],
       ),
     );

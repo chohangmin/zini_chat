@@ -3,17 +3,17 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class SendGroupMessage extends StatefulWidget {
-  const SendGroupMessage({super.key, required this.chatRoomId});
+  const SendGroupMessage(
+      {super.key, required this.chatRoomId, required this.currentUserId});
 
   final String chatRoomId;
+  final String currentUserId;
 
   @override
   State<SendGroupMessage> createState() => _SendGroupMessageState();
 }
 
 class _SendGroupMessageState extends State<SendGroupMessage> {
-  final currentUserId = FirebaseAuth.instance.currentUser!.uid;
-
   late final currentUserName;
 
   late final currentUserImage;
@@ -37,7 +37,7 @@ class _SendGroupMessageState extends State<SendGroupMessage> {
   void _getUserInfo() async {
     final userDocs = await FirebaseFirestore.instance
         .collection('users')
-        .doc(currentUserId)
+        .doc(widget.currentUserId)
         .get();
     currentUserName = userDocs.data()!['userName'];
     currentUserImage = userDocs.data()!['userImage'];
@@ -69,7 +69,7 @@ class _SendGroupMessageState extends State<SendGroupMessage> {
           .add({
         'text': text,
         'time': Timestamp.now(),
-        'userId': currentUserId,
+        'userId': widget.currentUserId,
         'userName': currentUserName,
         'userImage': currentUserImage,
       });

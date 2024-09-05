@@ -4,9 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:zini_chat/widget/chat_bubble.dart';
 
 class Messages extends StatelessWidget {
-  const Messages({required this.chatRoomId, required this.type, super.key});
+  const Messages({required this.chatRoomId, required this.currentUserId,required this.type, super.key});
 
   final String chatRoomId;
+  final String currentUserId;
 
   final String type;
 
@@ -34,7 +35,7 @@ class Messages extends StatelessWidget {
         }
 
         final chatDocs = snapshot.data!.docs;
-        final currentUser = FirebaseAuth.instance.currentUser;
+       
 
         return ListView.builder(
             itemCount: chatDocs.length,
@@ -43,7 +44,7 @@ class Messages extends StatelessWidget {
                   text: chatDocs[index]['text'],
                   userImage: chatDocs[index]['userImage'],
                   userName: chatDocs[index]['userName'],
-                  isMe: chatDocs[index]['userId'] == currentUser!.uid);
+                  isMe: chatDocs[index]['userId'] == currentUserId);
             });
       },
     );

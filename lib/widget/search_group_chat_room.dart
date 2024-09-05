@@ -5,9 +5,10 @@ import 'package:zini_chat/widget/messages.dart';
 import 'package:zini_chat/widget/send_group_message.dart';
 
 class SearchGroupChatRoom extends StatelessWidget {
-  const SearchGroupChatRoom({super.key, required this.invitedUsers});
+  const SearchGroupChatRoom({super.key, required this.currentUserId,required this.invitedUsers});
 
   final Set<String> invitedUsers;
+  final String currentUserId;
 
   @override
   Widget build(BuildContext context) {
@@ -20,9 +21,13 @@ class SearchGroupChatRoom extends StatelessWidget {
         body: Column(
           children: [
             Expanded(
-                child: Messages(chatRoomId: chatRoomId, type: "groupChatRoom")),
+                child: Messages(
+                    chatRoomId: chatRoomId,
+                    currentUserId: currentUserId,
+                    type: "groupChatRoom")),
             SendGroupMessage(
               chatRoomId: chatRoomId,
+              currentUserId: currentUserId,
             )
           ],
         ),

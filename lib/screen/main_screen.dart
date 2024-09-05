@@ -33,9 +33,9 @@ class _MainScreenState extends State<MainScreen> {
     _currentUserId = FirebaseAuth.instance.currentUser!.uid;
     _widgetOptions = [
       FriendScreen(currentUserId: _currentUserId),
-       ChatListScreen(currentUserId: _currentUserId),
-       GroupChatScreen(currentUserId: _currentUserId),
-       SettingScreen(currentUserId: _currentUserId),
+      //  ChatListScreen(currentUserId: _currentUserId),
+      GroupChatScreen(currentUserId: _currentUserId),
+      SettingScreen(currentUserId: _currentUserId),
     ];
   }
 
@@ -44,6 +44,7 @@ class _MainScreenState extends State<MainScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Zini Chat'),
+        scrolledUnderElevation: 0.0,
         actions: [
           IconButton(
               onPressed: () async {
@@ -66,10 +67,10 @@ class _MainScreenState extends State<MainScreen> {
             icon: Icon(Icons.person),
             label: 'Friends',
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.chat),
-            label: 'Chats',
-          ),
+          // BottomNavigationBarItem(
+          //   icon: Icon(Icons.chat),
+          //   label: 'Chats',
+          // ),
           BottomNavigationBarItem(
             icon: Icon(Icons.chat_outlined),
             label: 'Group Chats',

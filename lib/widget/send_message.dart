@@ -4,21 +4,18 @@ import 'package:flutter/material.dart';
 
 class SendMessage extends StatefulWidget {
   const SendMessage(
-      {super.key,
-      required this.chatRoomId,
-      required this.user1,
-      required this.user2});
+      {super.key, required this.chatRoomId, required this.currentUserId});
 
   final String chatRoomId;
-  final String user1;
-  final String user2;
+  final String currentUserId;
 
   @override
   State<SendMessage> createState() => _SendMessageState();
 }
 
 class _SendMessageState extends State<SendMessage> {
-  final currentUser = FirebaseAuth.instance.currentUser!.uid;
+  late final currentUserName;
+  late final currentUserImage;
 
   final myController = TextEditingController();
   String text = '';
@@ -26,6 +23,7 @@ class _SendMessageState extends State<SendMessage> {
   @override
   void initState() {
     super.initState();
+    _getUserInfo();
     myController.addListener(_enteringChat);
   }
 
@@ -35,23 +33,21 @@ class _SendMessageState extends State<SendMessage> {
     super.dispose();
   }
 
+  void _getUserInfo() async {
+    final userDocs = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(widget.currentUserId)
+        .get();
+    currentUserName = userDocs.data()!['userName'];
+    currentUserImage = userDocs.data()!['userImage'];
+  }
+
   void _enteringChat() {
     text = myController.text;
     print('Test Chat $text');
   }
 
   void _sendMessage() async {
-    print('test 1');
-    final userData1 = await FirebaseFirestore.instance
-        .collection('users')
-        .doc(widget.user1)
-        .get();
-    final userData2 = await FirebaseFirestore.instance
-        .collection('users')
-        .doc(widget.user2)
-        .get();
-    print('test 2');
-
     final chatDocRef = await FirebaseFirestore.instance
         .collection('chatRoom')
         .doc(widget.chatRoomId)
@@ -62,19 +58,6 @@ class _SendMessageState extends State<SendMessage> {
           .collection('chatRoom')
           .doc(widget.chatRoomId)
           .set({});
-
-      FirebaseFirestore.instance
-          .collection('chatRoom')
-          .doc(widget.chatRoomId)
-          .collection('usersInfo')
-          .add({
-        'user1Id': userData1.data()!['userId'],
-        'user1Name': userData1.data()!['userName'],
-        'user1Image': userData1.data()!['userImage'],
-        'user2Id': userData2.data()!['userId'],
-        'user2Name': userData2.data()!['userName'],
-        'user2Image': userData2.data()!['userImage'],
-      });
     }
 
     FirebaseFirestore.instance
@@ -85,13 +68,11 @@ class _SendMessageState extends State<SendMessage> {
       {
         'text': text,
         'time': Timestamp.now(),
-        'userId': currentUser,
-        'userName': userData1.data()!['userName'],
-        'userImage': userData1.data()!['userImage'],
+        'userId': widget.currentUserId,
+        'userName': currentUserName,
+        'userImage': currentUserImage,
       },
     );
-
-    print('test 3');
 
     myController.clear();
   }
