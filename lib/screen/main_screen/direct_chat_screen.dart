@@ -1,12 +1,48 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:zini_chat/widget/messages.dart';
-import 'package:zini_chat/widget/send_message.dart';
+import 'package:zini_chat/widget/direct_chat_screen/chat_room_card.dart';
+import 'package:zini_chat/widget/message/messages.dart';
+import 'package:zini_chat/widget/message/send_message.dart';
 
-class ChatListScreen extends StatelessWidget {
-  const ChatListScreen({required this.currentUserId, super.key});
+class DirectChatScreen extends StatelessWidget {
+  const DirectChatScreen({required this.currentUserId, super.key});
 
   final String currentUserId;
+
+  void directChat(context, String chatRoomId,
+      DocumentSnapshot<Map<String, dynamic>>? opponentUserInfo) {
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => Scaffold(
+            appBar: AppBar(
+              title: Text(opponentUserInfo!['userName']),
+              actions: [
+                IconButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  icon: const Icon(Icons.exit_to_app),
+                )
+              ],
+            ),
+            body: Column(
+              children: [
+                Expanded(
+                    child: Messages(
+                  chatRoomId: chatRoomId,
+                  currentUserId: currentUserId,
+                  type: "chatRoom",
+                )),
+                SendMessage(
+                  chatRoomId: chatRoomId,
+                  currentUserId: currentUserId,
+                ),
+              ],
+            ),
+          ),
+        ));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -89,70 +125,14 @@ class ChatListScreen extends StatelessWidget {
                     }
 
                     final opponentUserInfo = snapshot.data;
-      
+
                     return GestureDetector(
                       onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => Scaffold(
-                                appBar: AppBar(
-                                  title: opponentUserInfo['userName'],
-                                  actions: [
-                                    IconButton(
-                                      onPressed: () {
-                                        Navigator.pop(context);
-                                      },
-                                      icon: const Icon(Icons.exit_to_app),
-                                    )
-                                  ],
-                                ),
-                                body: Column(
-                                  children: [
-                                    Expanded(
-                                        child: Messages(
-                                      chatRoomId: chatRoom.id,
-                                      currentUserId: currentUserId,
-                                      type: "chatRoom",
-                                    )),
-                                    SendMessage(
-                                      chatRoomId: chatRoom.id,
-                                      currentUserId: currentUserId,
-
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ));
+                        directChat(context, chatRoom.id, opponentUserInfo);
                       },
-                      child: Card(
-                        child: ListTile(
-                          leading: Container(
-                            margin: const EdgeInsets.all(1),
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                SizedBox(
-                                  width: 30,
-                                  height: 30,
-                                  child: CircleAvatar(
-                                    backgroundImage: NetworkImage(
-                                        opponentUserInfo!['userImage']),
-                                  ),
-                                ),
-                                Text(opponentUserInfo['userName']),
-                              ],
-                            ),
-                          ),
-                          title: Text(
-                            latestMessage['text'],
-                          ),
-                          trailing: Text(
-                            latestMessage['time'].toDate().toString(),
-                          ),
-                        ),
-                      ),
+                      child: ChatRoomCard(
+                          latestMessage: latestMessage,
+                          opponentUserInfo: opponentUserInfo),
                     );
                   },
                 );

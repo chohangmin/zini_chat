@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'dart:io';
@@ -7,7 +6,7 @@ import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 
 class SettingScreen extends StatefulWidget {
-  const SettingScreen({required this.currentUserId,super.key});
+  const SettingScreen({required this.currentUserId, super.key});
 
   final String currentUserId;
 
@@ -17,7 +16,6 @@ class SettingScreen extends StatefulWidget {
 
 class _SettingScreenState extends State<SettingScreen> {
   final _formKey = GlobalKey<FormState>();
-  final _authentication = FirebaseAuth.instance;
 
   String userName = '';
   String? userUid;
@@ -30,7 +28,6 @@ class _SettingScreenState extends State<SettingScreen> {
   List<String> _userNames = [];
 
   final ImagePicker _picker = ImagePicker();
-  // File? _pickedImage;
 
   Future<void> _pickImage(ImageSource source) async {
     final pickedImageFile = await _picker.pickImage(
@@ -40,13 +37,12 @@ class _SettingScreenState extends State<SettingScreen> {
     );
 
     if (pickedImageFile != null) {
-      // setState(() {
-      //   _pickedImage = File(pickedImageFile.path);
+
       setState(() {
         userImage = pickedImageFile.path;
       });
 
-      // });
+
 
       final pickedImage = File(pickedImageFile.path);
 
@@ -94,7 +90,7 @@ class _SettingScreenState extends State<SettingScreen> {
   @override
   void initState() {
     super.initState();
-    userUid = _authentication.currentUser!.uid;
+    userUid = widget.currentUserId;
     _fetchUserNames();
   }
 
@@ -192,8 +188,9 @@ class _SettingScreenState extends State<SettingScreen> {
                     GestureDetector(
                       child: CircleAvatar(
                         radius: 40,
-                        backgroundImage:
-                            userImage == null ? NetworkImage(userDocs!['userImage']) : NetworkImage(userUrl),
+                        backgroundImage: userImage == null
+                            ? NetworkImage(userDocs!['userImage'])
+                            : NetworkImage(userUrl),
                       ),
                       onTap: () {
                         print('[test circle avartar] $userUrl');

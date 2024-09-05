@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:zini_chat/widget/search_group_chat_room.dart';
+import 'package:zini_chat/widget/message/search_group_chat_room.dart';
 
 class AddGroup extends StatelessWidget {
   const AddGroup({required this.selectedUsers, required this.currentUserId,super.key});

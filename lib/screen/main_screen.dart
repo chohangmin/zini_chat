@@ -1,10 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:zini_chat/screen/chat_list_screen.dart';
-import 'package:zini_chat/screen/friend_screen.dart';
-import 'package:zini_chat/screen/group_chat_screen.dart';
-import 'package:zini_chat/screen/setting_screen.dart';
+import 'package:zini_chat/screen/main_screen/direct_chat_screen.dart';
+import 'package:zini_chat/screen/main_screen/friend_screen.dart';
+import 'package:zini_chat/screen/main_screen/group_chat_screen.dart';
+import 'package:zini_chat/screen/main_screen/setting_screen.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -33,7 +33,7 @@ class _MainScreenState extends State<MainScreen> {
     _currentUserId = FirebaseAuth.instance.currentUser!.uid;
     _widgetOptions = [
       FriendScreen(currentUserId: _currentUserId),
-      //  ChatListScreen(currentUserId: _currentUserId),
+      DirectChatScreen(currentUserId: _currentUserId),
       GroupChatScreen(currentUserId: _currentUserId),
       SettingScreen(currentUserId: _currentUserId),
     ];
@@ -67,10 +67,10 @@ class _MainScreenState extends State<MainScreen> {
             icon: Icon(Icons.person),
             label: 'Friends',
           ),
-          // BottomNavigationBarItem(
-          //   icon: Icon(Icons.chat),
-          //   label: 'Chats',
-          // ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.chat),
+            label: 'Chats',
+          ),
           BottomNavigationBarItem(
             icon: Icon(Icons.chat_outlined),
             label: 'Group Chats',

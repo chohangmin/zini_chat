@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:zini_chat/widget/chat_bubble.dart';
+import 'package:zini_chat/widget/message/chat_bubble.dart';
 
 class Messages extends StatelessWidget {
   const Messages({required this.chatRoomId, required this.currentUserId,required this.type, super.key});

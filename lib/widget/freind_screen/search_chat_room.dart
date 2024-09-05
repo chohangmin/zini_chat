@@ -1,32 +1,25 @@
 import 'package:flutter/material.dart';
-import 'package:zini_chat/widget/messages.dart';
-import 'package:zini_chat/widget/send_message.dart';
+import 'package:zini_chat/widget/message/messages.dart';
+import 'package:zini_chat/widget/message/send_message.dart';
 
 class SearchChatRoom extends StatelessWidget {
   const SearchChatRoom(
       {super.key,
       required this.currentUserId,
-      required this.user1,
-      required this.user2});
+      required this.opponentUserId});
 
-  final String user1;
-  final String user2;
+  
+  final String opponentUserId;
 
   final String currentUserId;
 
   @override
   Widget build(BuildContext context) {
-    if (user1 == user2) {
-      Navigator.pop(context, true);
-      print("test // id is same!");
-    }
-    List<String> userIds = [user1, user2];
+  
+    List<String> userIds = [currentUserId, opponentUserId];
     userIds.sort();
     String chatRoomId = userIds[0] + userIds[1];
 
-    print(user1);
-    print(user2);
-    print("test chatRoom ID $chatRoomId");
 
     return Scaffold(
       body: Column(

@@ -1,8 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:zini_chat/widget/messages.dart';
-import 'package:zini_chat/widget/send_group_message.dart';
+import 'package:zini_chat/widget/group_chat_screen/group_chat_room_card.dart';
+import 'package:zini_chat/widget/message/messages.dart';
+import 'package:zini_chat/widget/message/send_group_message.dart';
 
 class GroupChatList extends StatelessWidget {
   const GroupChatList({super.key, required this.currentUserId});
@@ -22,7 +22,6 @@ class GroupChatList extends StatelessWidget {
           );
         }
 
-    
         final groupChatRoomDocs = snapshot.data!.docs;
 
         if (groupChatRoomDocs.isEmpty) {
@@ -104,12 +103,8 @@ class GroupChatList extends StatelessWidget {
                       ),
                     );
                   },
-                  child: Card(
-                    child: ListTile(
-                      title: Text(latestMessage['text']),
-                      trailing: Text(latestMessage['time'].toDate().toString()),
-                    ),
-                  ),
+                  child: GroupChatRoomCard(
+                      latestMessage: latestMessage, chatRoomName: "TBD"),
                 );
               },
             );

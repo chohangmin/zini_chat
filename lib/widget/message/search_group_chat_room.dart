@@ -1,8 +1,8 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:zini_chat/widget/messages.dart';
-import 'package:zini_chat/widget/send_group_message.dart';
+import 'package:zini_chat/widget/message/messages.dart';
+import 'package:zini_chat/widget/message/send_group_message.dart';
 
 class SearchGroupChatRoom extends StatelessWidget {
   const SearchGroupChatRoom({super.key, required this.currentUserId,required this.invitedUsers});
