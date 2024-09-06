@@ -81,10 +81,12 @@ class _SendMessageState extends State<SendMessage> {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        SizedBox(
-          width: 200,
-          child: TextField(
-            controller: myController,
+        Expanded(
+          child: Container(
+            margin: const EdgeInsets.all(7),
+            child: TextField(
+              controller: myController,
+            ),
           ),
         ),
         IconButton(

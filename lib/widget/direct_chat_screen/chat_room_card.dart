@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class ChatRoomCard extends StatelessWidget {
   const ChatRoomCard(
@@ -33,7 +34,7 @@ class ChatRoomCard extends StatelessWidget {
           latestMessage['text'],
         ),
         trailing: Text(
-          latestMessage['time'].toDate().toString(),
+          DateFormat('yyyy-MM-dd HH:mm').format(latestMessage['time'].toDate()),
         ),
       ),
     );

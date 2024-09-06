@@ -2,8 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class FriendCard extends StatelessWidget {
-  const FriendCard(
-      {required this.showDialog, required this.user, super.key});
+  const FriendCard({required this.showDialog, required this.user, super.key});
 
   final QueryDocumentSnapshot<Map<String, dynamic>> user;
 
@@ -15,7 +14,7 @@ class FriendCard extends StatelessWidget {
       opacity: user['isConnecting'] ? 1 : 0.7,
       child: GestureDetector(
           onTap: () {
-            showDialog;
+            showDialog(context, user['userId']);
           },
           child: Card(
             child: ListTile(

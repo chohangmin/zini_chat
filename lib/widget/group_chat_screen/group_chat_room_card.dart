@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class GroupChatRoomCard extends StatelessWidget {
   const GroupChatRoomCard(
@@ -30,7 +31,9 @@ class GroupChatRoomCard extends StatelessWidget {
           ),
         ),
         title: Text(latestMessage['text']),
-        trailing: Text(latestMessage['time'].toDate().toString()),
+        trailing: Text(
+          DateFormat('yyyy-MM-dd HH:mm').format(latestMessage['time'].toDate()),
+        ),
       ),
     );
   }

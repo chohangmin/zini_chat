@@ -18,14 +18,11 @@ class _SettingScreenState extends State<SettingScreen> {
   final _formKey = GlobalKey<FormState>();
 
   String userName = '';
-  String? userUid;
   String? userImage;
 
   String userUrl = '';
 
   final TextEditingController _userNameController = TextEditingController();
-
-  List<String> _userNames = [];
 
   final ImagePicker _picker = ImagePicker();
 
@@ -37,19 +34,16 @@ class _SettingScreenState extends State<SettingScreen> {
     );
 
     if (pickedImageFile != null) {
-
       setState(() {
         userImage = pickedImageFile.path;
       });
-
-
 
       final pickedImage = File(pickedImageFile.path);
 
       final refImage = FirebaseStorage.instance
           .ref()
           .child('user_image')
-          .child('$userUid.jpg');
+          .child('${widget.currentUserId}.jpg');
 
       await refImage.putFile(pickedImage);
 
@@ -61,193 +55,188 @@ class _SettingScreenState extends State<SettingScreen> {
 
       await FirebaseFirestore.instance
           .collection('users')
-          .doc(userUid)
+          .doc(widget.currentUserId)
           .update({'userImage': url});
     }
   }
 
-  Future<void> _fetchUserNames() async {
-    final QuerySnapshot userNamesSnapshot =
-        await FirebaseFirestore.instance.collection('users').get();
-    final List<String> userNames =
-        userNamesSnapshot.docs.map((doc) => doc['userName'] as String).toList();
+  void changeUserImage() {
+    showDialog(
+      context: context,
+      builder: (context) => Dialog(
+        backgroundColor: Colors.white,
+        child: Container(
+          padding: const EdgeInsets.all(20),
+          width: 150,
+          height: 300,
+          child: Column(
+            children: [
+              ListTile(
+                leading: const Icon(Icons.camera),
+                title: const Text('Camera'),
+                onTap: () {
+                  _pickImage(ImageSource.camera);
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.photo_library),
+                title: const Text('Gallery'),
+                onTap: () {
+                  _pickImage(ImageSource.gallery);
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.person),
+                title: const Text('Default image'),
+                onTap: () async {
+                  await FirebaseFirestore.instance
+                      .collection('users')
+                      .doc(widget.currentUserId)
+                      .update({'userImage': null});
 
-    setState(() {
-      _userNames = userNames;
-    });
-  }
-
-  Future<void> _fetchUserImage() async {
-    final DocumentSnapshot userImageSnapshot =
-        await FirebaseFirestore.instance.collection('users').doc(userUid).get();
-    final String? image = userImageSnapshot['userImage'] as String?;
-
-    setState(() {
-      userImage = image;
-    });
+                  FirebaseStorage.instance
+                      .ref()
+                      .child('user_image')
+                      .child('${widget.currentUserId}.jpg')
+                      .delete();
+                },
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 
   @override
   void initState() {
     super.initState();
-    userUid = widget.currentUserId;
-    _fetchUserNames();
+    // _fetchUserNames();
   }
 
   @override
   Widget build(BuildContext context) {
     return StreamBuilder(
-      stream: FirebaseFirestore.instance
-          .collection('users')
-          .doc(userUid)
-          .snapshots(),
-      builder: (BuildContext context,
-          AsyncSnapshot<DocumentSnapshot<Map<String, dynamic>>> snapshot) {
+      stream: FirebaseFirestore.instance.collection('users').snapshots(),
+      builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
+          return const Center(child: CircularProgressIndicator());
         }
 
-        if (!snapshot.hasData) {
-          return const Text('No data found');
-        }
+        final userIdDocs = snapshot.data.docs;
 
-        final userDocs = snapshot.data!.data();
+        final List<dynamic> userNames =
+            userIdDocs.map((doc) => doc['userName']).toList();
 
-        return Scaffold(
-          body: GestureDetector(
-            onTap: () {
-              Focus.of(context).unfocus();
-            },
-            child: Column(
-              children: [
-                Row(
+        return StreamBuilder(
+          stream: FirebaseFirestore.instance
+              .collection('users')
+              .doc(widget.currentUserId)
+              .snapshots(),
+          builder: (BuildContext context,
+              AsyncSnapshot<DocumentSnapshot<Map<String, dynamic>>> snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            }
+
+            if (!snapshot.hasData) {
+              return const Text('No data found');
+            }
+
+            final userDocs = snapshot.data!.data();
+
+            return Scaffold(
+              body: GestureDetector(
+                onTap: () {
+                  Focus.of(context).unfocus();
+                },
+                child: Column(
                   children: [
-                    Expanded(
-                      child: Form(
-                        key: _formKey,
-                        child: TextFormField(
-                          key: const ValueKey(1),
-                          controller: _userNameController,
-                          decoration: const InputDecoration(
-                            prefixIcon: Icon(Icons.person),
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.all(
-                                Radius.circular(20),
-                              ),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.all(
-                                Radius.circular(20),
-                              ),
-                            ),
-                          ),
-                          validator: (value) {
-                            if (value!.isEmpty) {
-                              return 'Please enter user name';
-                            }
-                            if (_userNames.contains(value)) {
-                              return 'Entered user name is existing... Change user name';
-                            }
-
-                            return null;
-                          },
-                        ),
+                    GestureDetector(
+                      onTap: changeUserImage,
+                      child: CircleAvatar(
+                        radius: 40,
+                        backgroundImage: NetworkImage(userDocs!['userImage']),
                       ),
                     ),
                     const SizedBox(
-                      width: 10,
+                      height: 30,
                     ),
-                    ElevatedButton(
-                      onPressed: () {
-                        if (_formKey.currentState!.validate()) {
-                          final userName = _userNameController.text;
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('Change user name successful!'),
-                            ),
-                          );
-                          FirebaseFirestore.instance
-                              .collection('users')
-                              .doc(userUid)
-                              .update({'userName': userName});
-                          _fetchUserNames();
-                          _userNameController.clear();
-                        }
-                      },
-                      child: const Text('Submit'),
-                    ),
-                  ],
-                ),
-                const SizedBox(
-                  height: 30,
-                ),
-                Row(
-                  children: [
-                    GestureDetector(
-                      child: CircleAvatar(
-                        radius: 40,
-                        backgroundImage: userImage == null
-                            ? NetworkImage(userDocs!['userImage'])
-                            : NetworkImage(userUrl),
-                      ),
-                      onTap: () {
-                        print('[test circle avartar] $userUrl');
-                        showDialog(
-                          context: context,
-                          builder: (context) => Dialog(
-                            backgroundColor: Colors.white,
-                            child: Container(
-                              padding: const EdgeInsets.all(20),
-                              width: 150,
-                              height: 300,
-                              child: Column(
-                                children: [
-                                  ListTile(
-                                    leading: const Icon(Icons.camera),
-                                    title: const Text('Camera'),
-                                    onTap: () {
-                                      _pickImage(ImageSource.camera);
-                                    },
-                                  ),
-                                  ListTile(
-                                    leading: const Icon(Icons.photo_library),
-                                    title: const Text('Gallery'),
-                                    onTap: () {
-                                      _pickImage(ImageSource.gallery);
-                                    },
-                                  ),
-                                  ListTile(
-                                    leading: const Icon(Icons.person),
-                                    title: const Text('Default image'),
-                                    onTap: () async {
-                                      await FirebaseFirestore.instance
-                                          .collection('users')
-                                          .doc(userUid)
-                                          .update({'userImage': null});
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Container(
+                            margin: const EdgeInsets.all(7),
+                            child: Form(
+                              key: _formKey,
+                              child: TextFormField(
+                                key: const ValueKey(1),
+                                controller: _userNameController,
+                                decoration: InputDecoration(
+                                    prefixIcon: const Icon(Icons.person),
+                                    hintText: userDocs['userName'],
+                                    enabledBorder: const OutlineInputBorder(
+                                      borderRadius: BorderRadius.all(
+                                        Radius.circular(20),
+                                      ),
+                                    ),
+                                    focusedBorder: const OutlineInputBorder(
+                                      borderRadius: BorderRadius.all(
+                                        Radius.circular(20),
+                                      ),
+                                    ),
+                                    focusedErrorBorder:
+                                        const OutlineInputBorder(
+                                      borderRadius: BorderRadius.all(
+                                        Radius.circular(20),
+                                      ),
+                                    ),
+                                    errorMaxLines: 2),
+                                validator: (value) {
+                                  if (value!.isEmpty) {
+                                    return 'Please enter user name';
+                                  }
+                                  if (userNames.contains(value)) {
+                                    return 'Entered user name is existing...\nChange user name';
+                                  }
 
-                                      FirebaseStorage.instance
-                                          .ref()
-                                          .child('user_image')
-                                          .child('$userUid.jpg')
-                                          .delete();
-                                    },
-                                  ),
-                                ],
+                                  return null;
+                                },
                               ),
                             ),
                           ),
-                        );
+                        ),
+                        const SizedBox(
+                          width: 10,
+                        ),
+                        ElevatedButton(
+                          onPressed: () {
+                            if (_formKey.currentState!.validate()) {
+                              final userName = _userNameController.text;
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text('Change user name successful!'),
+                                ),
+                              );
+                              FirebaseFirestore.instance
+                                  .collection('users')
+                                  .doc(widget.currentUserId)
+                                  .update({'userName': userName});
 
-                        // _fetchUserImage();
-                      },
-                    )
+                              _userNameController.clear();
+                            }
+                          },
+                          child: const Text('Submit'),
+                        ),
+                      ],
+                    ),
                   ],
                 ),
-              ],
-            ),
-          ),
+              ),
+            );
+          },
         );
       },
     );
